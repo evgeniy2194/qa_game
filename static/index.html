@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Интелектуал</title>
+    </head>
+    <body>
+        <style>
+
+            * {
+                margin: 0;
+                padding: 0;
+            }
+
+            #app {
+                position: relative;
+                display: block;
+                height: 498px;
+                padding: 20px;
+            }
+
+            #preload {
+                text-align: center;
+                position: fixed;
+                background-color: #3bc2ff;
+                top: 0;
+                right: 0;
+                left: 0;
+                bottom: 0;
+            }
+
+            .preload_text {
+                color: #fff;
+                font-weight: bold;
+                font-size: 24px;
+            }
+
+            #coinsArea,
+            #ratingArea,
+            #levelArea {
+                position: fixed;
+                padding: 10px;
+                margin: 5px;
+                border:1px solid #ddd;
+            }
+
+            #levelArea {
+                top:0;
+                left: 0px;
+            }
+
+            #coinsArea {
+                top:0;
+                right: 0px;
+            }
+
+            #ratingArea {
+                bottom: 0;
+                right: 0;
+            }
+
+            #gameArea {
+                position: fixed;
+                top: 100px;
+                bottom: 100px;
+            }
+
+            .btn {
+                border-radius: 5px;
+                border: 2px solid #fff;
+                cursor: pointer;
+                padding: 10px 15px;
+                font-weight: bold;
+                font-size: 18px;
+                color: #fff;
+                margin: 2px;
+            }
+
+            .btn-orange {
+                border-color: #ffa70c;
+                background-color: #ffd054;
+            }
+
+            .btn-blue {
+                border-color: #37a4ff;
+                background-color: #67baff;
+            }
+
+            .btn-red {
+                border-color: red;
+                background-color: #ff655d;
+            }
+
+            .btn-green {
+                border-color: green;
+                background-color: #14c314;
+            }
+
+        </style>
+
+        <div id="app">
+            <div id="preload">
+                <span class="preload_text">Загрузка...</span>
+            </div>
+        </div>
+        <script src="/static/bundle.js"></script>
+    </body>
+</html>
