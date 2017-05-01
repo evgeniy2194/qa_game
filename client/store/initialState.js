@@ -8,7 +8,6 @@ const initialState = {
         accessToken: '',
         authKey: '',
         user: {
-            uid: '',
             firstName: '',
             lastName: ''
         }

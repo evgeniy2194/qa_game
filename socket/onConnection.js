@@ -5,10 +5,11 @@ import UserStore from '../store/usersStore';
 
 export default function(socket) {
 
-    console.log('[SOCKET]', 'new connection: ' + socket.id);
-
     let query = socket.handshake.query;
     let uid = query.uid;
+
+    console.log('[SOCKET]', 'uid: ', uid, 'new connection: ' + socket.id);
+
 
     //Проверяем авторизирован ли пользователь
     if (!checkAuthKey(uid, query.authKey)) {
@@ -16,34 +17,38 @@ export default function(socket) {
         return;
     }
 
-    //Ищем пользователя, если нет - создаем
-    User.findOne({uid: uid}, (err, user) => {
+    try {
+        //Ищем пользователя, если нет - создаем
+        User.findOne({uid: uid}, (err, user) => {
+            if (err) {
+                throw err;
+            }
 
-        //Если ошибка - отключаем от сервера
-        if (err) {
-            socket.disconnect();
-            return;
-        }
-
-        //Если не нашли юзера - создаем
-        if (user) {
-            //Сохраняем пользователя в хранилище
-            UserStore.add(user._id, user);
-            socket.userId = user._id;
-            //Отправляем клиенту данные о пользователе
-            socket.emit('message', sendUserInfo(user));
-        } else {
-            User.create({
-                uid: uid,
-                firstName: query.firstName,
-                lastName: query.lastName,
-            }, (err, user) => {
+            //Если не нашли юзера - создаем
+            if (user) {
                 //Сохраняем пользователя в хранилище
                 UserStore.add(user._id, user);
                 socket.userId = user._id;
                 //Отправляем клиенту данные о пользователе
                 socket.emit('message', sendUserInfo(user));
-            });
-        }
-    });
+            } else {
+                User.create({
+                    uid: uid,
+                    firstName: query.firstName,
+                    lastName: query.lastName,
+                }, (err, user) => {
+                    if (err) {
+                        throw err;
+                    }
+                    //Сохраняем пользователя в хранилище
+                    UserStore.add(user._id, user);
+                    socket.userId = user._id;
+                    //Отправляем клиенту данные о пользователе
+                    socket.emit('message', sendUserInfo(user));
+                });
+            }
+        });
+    } catch (err) {
+        console.trace(err);
+    }
 }
