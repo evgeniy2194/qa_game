@@ -69,6 +69,8 @@ export default function () {
                     if (questionNumber === 4) {
                         clearInterval(interval);
 
+                        console.log('userAnswers:', currentGame.usersAnswers);
+
                         //Считаем очки игроков
                         let gamePoints = {};
 

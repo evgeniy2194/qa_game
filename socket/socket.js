@@ -4,6 +4,7 @@ import startGame from './startGame';
 import onAnswer from './onAnswer';
 import QueueStore from '../store/queueStore';
 import UsersStore from '../store/usersStore';
+import config from '../config/config';
 
 let io = null;
 
@@ -25,8 +26,8 @@ export function createSocket(server) {
                     //Добавляем игрока в очередь
                     QueueStore.add(socket.id, socket);
 
-                    //Начинаем игру если в очереди больше 2х игроков
-                    if(QueueStore.size() >= 1) {
+                    //Начинаем игру если есть достаточное колл-во игроков
+                    if(QueueStore.size() >= config.game.playersCount) {
                         startGame();
                     }
                     break;
