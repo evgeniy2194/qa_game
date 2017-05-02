@@ -1,7 +1,7 @@
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux'
-import React, { Component } from 'react';
-import { findGame, cancelFindGame, answerGame } from '../actions/gameActions';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux'
+import React, {Component} from 'react';
+import {findGame, cancelFindGame, answerGame} from '../actions/gameActions';
 import Preload from './preload';
 import CoinsArea from './coinsArea';
 import LevelArea from './levelArea';
@@ -12,9 +12,9 @@ class App extends Component {
 
     render() {
         const props = this.props;
-        var tpl;
+        let tpl;
 
-        if(!this.props.user._id){
+        if (!this.props.user._id) {
             tpl = ( <Preload /> );
         } else {
             tpl = (
@@ -24,8 +24,8 @@ class App extends Component {
                           cancelFindGame={ props.cancelFindGame }
                           answerGame={ props.answerGame }
                     />
-                    <LevelArea user={ props.user } />
-                    <CoinsArea coins={ props.user.coins } />
+                    <LevelArea user={ props.user }/>
+                    <CoinsArea coins={ props.user.coins } gems={ props.user.gems }/>
                     <RatingArea />
                 </div>
             );
@@ -35,7 +35,7 @@ class App extends Component {
     }
 }
 
-function mapStateToProps(state){
+function mapStateToProps(state) {
     return {
         app: state.app,
         user: state.user,
@@ -44,7 +44,7 @@ function mapStateToProps(state){
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ findGame, cancelFindGame, answerGame }, dispatch);
+    return bindActionCreators({findGame, cancelFindGame, answerGame}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

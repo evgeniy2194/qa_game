@@ -20,6 +20,10 @@ const userSchema = new Schema({
         type: Number,
         default: 0
     },
+    gems: {                 //Гемов
+        type: Number,
+        default: 0
+    },
     firstName: {
         type: String,
         required: true

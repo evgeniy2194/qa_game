@@ -1,18 +1,21 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 export default class Game extends Component {
 
-    answer(gameId, answerId){
+    /**
+     * User answered on question
+     */
+    answer(gameId, answerId) {
         this.props.answerGame(gameId, answerId);
     }
 
-    getAnswerButtonColor(answerId){
+    getAnswerButtonColor(answerId) {
         const chosenAnswer = this.props.game.chosenAnswer;
         const correctAnswer = this.props.game.correctAnswer;
 
         let className = 'btn ';
 
-        if (chosenAnswer == answerId){
+        if (chosenAnswer == answerId) {
             className += correctAnswer ? 'btn-green' : 'btn-red';
         } else {
             className += 'btn-orange';
@@ -21,10 +24,10 @@ export default class Game extends Component {
         return className;
     }
 
-    render(){
+    render() {
 
-        const game           = this.props.game;
-        const findGame       = this.props.findGame;
+        const game = this.props.game;
+        const findGame = this.props.findGame;
         const cancelFindGame = this.props.cancelFindGame;
 
         let gameTpl;
@@ -47,7 +50,8 @@ export default class Game extends Component {
                     <br/>
                     <div>Вопрос { game.questionNumber }/{ game.totalQuestion }</div>
                     <br/>
-                    <div>{ game.question } </div><br/>
+                    <div>{ game.question } </div>
+                    <br/>
                     { game.answers.map(
                         (answer) => {
                             return (
@@ -70,7 +74,26 @@ export default class Game extends Component {
                 </div>
             );
         } else {
-            gameTpl = ( <button className="btn btn-orange" onClick={ findGame }>Играть</button> );
+            let tpl = "";
+
+            if (game.showGameResult) {
+
+                const result = game.gameResut;
+                const keys = Object.keys(result);
+
+                keys.sort().reverse();
+
+                keys.forEach(key => {
+                    const users = result[key];
+
+                    users.forEach(user => {
+                        tpl += key + ' ' + user.firstName + ' ' + user.lastName + ' coins: ' + user.coins + ' exp: ' + user.exp + ' gems: ' + user.gems;
+                    });
+                });
+
+                tpl = ( <div><span>Результаты игры:</span><br/>{ tpl } </div>);
+            }
+            gameTpl = ( <div>{ tpl }<button className="btn btn-orange" onClick={ findGame }>Играть</button></div> );
         }
 
         return ( <div id="gameArea">{ gameTpl }</div> );

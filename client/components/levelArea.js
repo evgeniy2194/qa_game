@@ -8,7 +8,10 @@ export default class LevelArea extends Component {
 
         return <div id="levelArea">
             <span> { user.firstName } { user.lastName }</span><br/>
-            <span> Уровень: { user.level }</span><br/>
+            <span>
+                <img style={{width: "30px", height: "30px"}} src="https://cdn1.iconfinder.com/data/icons/macster/70/.svg-17-128.png"/>
+                { user.level }
+            </span><br/>
             <span> Опыт: { user.exp }</span>
         </div>
     }

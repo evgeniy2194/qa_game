@@ -1,8 +1,8 @@
 import GamesStore from '../store/gamesStore';
-import { answerResult } from '../actions/gameActions';
+import {answerResult} from '../actions/gameActions';
 import sendMessage from '../socket/sendMessage';
 
-export default function onAnswer(socket, data){
+export default (socket, data) => {
 
     //Достаем игру с хранилища
     let game = GamesStore.get(data.gameId);
@@ -11,30 +11,29 @@ export default function onAnswer(socket, data){
     const userId = socket.userId;
 
     //Если такой игры нет - ничего не делаем
-    if(!game) return null;
+    if (!game) return null;
 
-    let usersAnswer = game.usersAnswers[userId];
-    let currentQuestion = game.currentQuestion;
+    //Ответы пользователя
+    let userAnswers = game.usersAnswers.get(userId);
 
-    if (usersAnswer.answers[currentQuestion._id]) {        //Уже отвечал
+    const currentQuestion = game.currentQuestion;
+    const currentQuestionId = currentQuestion._id;
 
-    } else {        //Еще не отвечал
-
-        //Правильный ответ
-        const correctAnswerId = currentQuestion.correctAnswerId;
+    //Если пользователь не отвечал на этот вопрос
+    if (!userAnswers.answers.has(currentQuestionId)) {
 
         //Является ли ответ пользователя правильным
-        const isCorrect = answerId == correctAnswerId;
+        const isCorrect = answerId === currentQuestion.correctAnswerId;
 
-        if(isCorrect) {
-            usersAnswer.correctAnswers++;
-            usersAnswer.points += 10;
+        if (isCorrect) {
+            userAnswers.correctAnswers++;
+            userAnswers.points += 10;
         }
 
-        usersAnswer.answers[currentQuestion._id] = {
+        userAnswers.answers.set(currentQuestionId, {
             answerId: answerId,
             correctAnswer: isCorrect
-        };
+        });
 
         sendMessage(socket, answerResult(answerId, isCorrect));
     }

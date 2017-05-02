@@ -21,10 +21,11 @@ const initialState = {
         exp: 0,
         level: 1,
         coins: 0,
+        gems: 0,
     },
     //Описание игры
     game: {
-        // waitingPayers: false,       //Стоит ли игрок в очереди
+        waitingPayers: false,       //Стоит ли игрок в очереди
         gameWillStart: false,       //Игра начнется через несколько секунд
         iSgame: false,              //Идет ли игра
         gameId: 0,                  //Ид игры
@@ -36,6 +37,8 @@ const initialState = {
         correctAnswer: false,       //Верный ответ
         answers: [],                //Ответы
         points: 0,                  //Очков в текущей игре
+        showGameResult: false,
+        gameResut: []
     }
 };
 

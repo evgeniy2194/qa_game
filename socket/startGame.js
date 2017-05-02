@@ -28,16 +28,15 @@ export default function () {
             //Забираем с очереди 2 игрока для игры
             let players = QueueStore.cut(playersCount);
             let playerModels = [];
-            let usersAnswers = {};
+            let usersAnswers = new Map;
 
             players.forEach((player) => {
-                let userId = player.userId;
-                playerModels.push(UsersStore.get(userId));
-                usersAnswers[userId] = {
+                playerModels.push(UsersStore.get(player.userId));
+                usersAnswers.set(player.userId, {
                     correctAnswers: 0,
                     points: 0,
-                    answers: {}
-                }
+                    answers: new Map
+                });
             });
 
             //Сохраняем игру в базу
@@ -69,34 +68,69 @@ export default function () {
                     if (questionNumber === 4) {
                         clearInterval(interval);
 
-                        console.log('userAnswers:', currentGame.usersAnswers);
+                        const usersAnswers = currentGame.usersAnswers;
 
+                        //Создаем обьект результатов игры
+                        //Отправляем каждому игроку его очки
                         //Считаем очки игроков
-                        let gamePoints = {};
+                        let gamePoints = [];
+                        for (let answer of usersAnswers.values()) {
+                            let points = answer.points;
+                            if (gamePoints.indexOf(points) === -1) {
+                                gamePoints.push(answer.points);
+                            }
+                        }
 
-                        //Отправляем результаты игры каждому игроку отдельно
-                        players.forEach((player) => {
+                        gamePoints.sort().reverse();
 
-                            const coins = 5;
-                            const exp = 10;
+                        //Насчитываем награды игрокам
+                        let gameRewards = {};
 
-                            //Обновляем игроков
-                            let user = UsersStore.get(player.userId);
+                        usersAnswers.forEach((answer, userId) => {
+                            let user = UsersStore.get(userId);
+                            let correctAnswers = answer.correctAnswers;
+                            let points = answer.points;
 
-                            user.exp += exp;
+                            gameRewards[points] = gameRewards[points] || [];
+
+                            const place = gamePoints.indexOf(points);
+
+                            let coef = 6 - parseInt(place);
+
+                            const coins = 5 * coef;
+                            const exp = 10 * correctAnswers * coef;
+                            const gems = coef > 3 ? coef - 3 : 0;
+
+                            gameRewards[points].push({
+                                coins: coins,
+                                exp: exp,
+                                gems: gems,
+                                firstName: user.firstName,
+                                lastName: user.lastName,
+                                userId: userId
+                            });
+
                             user.coins += coins;
+                            user.exp += exp;
+                            user.gems += gems;
 
                             user.save(function (err) {
                                 if (err) throw err;
 
                                 //Обновляем юзера
-                                sendMessage(player, sendUserInfo(user));
+                                players.forEach(player =>{
+                                    if (player.userId === userId) {
+                                        sendMessage(player, sendUserInfo(user));
+                                    }
+                                });
                             });
 
                             //Удаляем игру из списка игр
                             GamesStore.remove(game._id);
                         });
 
+                        //Отправляем всем ирокам результаты игры
+                        sendMessage(players, gameResult(gameRewards));
                     } else {
 
                         const question = questions[questionNumber];
