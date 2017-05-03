@@ -22,12 +22,12 @@ export function sendQuestion(data){
     };
 }
 
-export function answerResult(answerId, correctAnswer){
+export function answerResult(answerId, isCorrectAnswer){
     return {
         type: "ANSWER_RESULT",
         data: {
             chosenAnswer: answerId,
-            correctAnswer: correctAnswer
+            isCorrectAnswer: isCorrectAnswer
         }
     }
 }

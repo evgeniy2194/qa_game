@@ -1,7 +1,7 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
 import React, {Component} from 'react';
-import {findGame, cancelFindGame, answerGame} from '../actions/gameActions';
+import {onFindGameClick, onCancelFindGameClick, onAnswerGameClick} from '../actions/gameActions';
 import Preload from './preload';
 import CoinsArea from './coinsArea';
 import LevelArea from './levelArea';
@@ -20,9 +20,9 @@ class App extends Component {
             tpl = (
                 <div>
                     <Game game={ props.game }
-                          findGame={ props.findGame }
-                          cancelFindGame={ props.cancelFindGame }
-                          answerGame={ props.answerGame }
+                          onFindGameClick={ props.onFindGameClick }
+                          onCancelFindGameClick={ props.onCancelFindGameClick }
+                          onAnswerClick={ props.onAnswerGameClick }
                     />
                     <LevelArea user={ props.user }/>
                     <CoinsArea coins={ props.user.coins } gems={ props.user.gems }/>
@@ -44,7 +44,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({findGame, cancelFindGame, answerGame}, dispatch);
+    return bindActionCreators({onFindGameClick, onCancelFindGameClick, onAnswerGameClick}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -1,4 +1,5 @@
-import {FIND_GAME, CANCEL_FIND_GAME, START_GAME, ANSWER_GAME} from '../actions/gameActions';
+import {CANCEL_FIND_GAME, START_GAME, ANSWER_GAME} from '../actions/gameActions';
+import {FIND_GAME} from "../constants/game";
 
 export default function (state = {}, action) {
     console.log('[GAME_REDUCER]', action);
@@ -12,7 +13,7 @@ export default function (state = {}, action) {
 
             store = {
                 chosenAnswer: false,
-                correctAnswer: null
+                isCorrectAnswer: null
             };
 
             return {...state, ...action.data, ...store};
@@ -24,15 +25,13 @@ export default function (state = {}, action) {
             //Обнуляем игру
             store = {
                 status: null,
-                gameWillStart: false,       //Игра начнется через несколько секунд
-                iSgame: false,              //Идет ли игра
                 gameId: 0,                  //Ид игры
                 users: [],                  //Игроки в комнате
                 totalQuestion: 0,           //Всего вопросов
                 questionNumber: 1,          //Номер вопроса
                 question: '',
                 chosenAnswer: 0,            //Выбранный ответ
-                correctAnswer: false,       //Верный ответ
+                isCorrectAnswer: false,       //Верный ответ
                 answers: [],                //Ответы
                 points: 0,                  //Очков в текущей игре
                 showGameResult: true,

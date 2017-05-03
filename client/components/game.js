@@ -1,63 +1,42 @@
 import React, {Component} from 'react';
 
-import SearchPlayersComponent from './game/searchPlayers';
+import FindGameComponent from './game/findGameComponent';
 import WaitingGameStartComponent from './game/waitingGameStart';
 import IsGameComponent from './game/isGame';
-import {GAME_WILL_START, SEARCH_PLAYERS, IS_GAME} from "../constants/game";
+import {GAME_WILL_START, FIND_GAME, IS_GAME} from "../constants/game";
 
 
 export default class Game extends Component {
 
-    /**
-     * User answered on question
-     */
-    answer(gameId, answerId) {
-        this.props.answerGame(gameId, answerId);
-    }
-
-    getAnswerButtonColor(answerId) {
-        /**
-         * Выбранный ответ
-         * @type {number}
-         */
-        const chosenAnswer = this.props.game.chosenAnswer;
-
-        /**
-         * Верный ли ответ
-         * @type {boolean}
-         */
-        const correctAnswer = this.props.game.correctAnswer;
-
-        let className = 'btn ';
-
-        if (chosenAnswer == answerId) {
-            className += correctAnswer ? 'btn-green' : 'btn-red';
-        } else {
-            className += 'btn-orange';
-        }
-
-        return className;
-    }
-
     render() {
 
         const game = this.props.game;
-        const findGame = this.props.findGame;
+        const onFindGameClick = this.props.onFindGameClick;
 
         let gameTpl;
-
+        console.log(game.status);
         switch (game.status) {
             case GAME_WILL_START:
                 gameTpl = <WaitingGameStartComponent/>;
                 break;
-            case SEARCH_PLAYERS:
-                gameTpl = <SearchPlayersComponent cancelSearchPlayers={this.props.cancelFindGame}/>;
+            case FIND_GAME:
+                gameTpl = <FindGameComponent cancelSearchPlayers={this.props.onCancelFindGameClick}/>;
                 break;
             case IS_GAME:
-                gameTpl = <IsGameComponent game={this.props.game}/>;
+                gameTpl = (
+                    <IsGameComponent
+                        onAnswerClick={this.props.onAnswerClick}
+                        game={this.props.game}/>
+                );
                 break;
             default:
-                gameTpl = <button style={{'margin-top':'150px'}} className="btn btn-orange" onClick={ findGame }>Играть</button>;
+                gameTpl = (
+                    <button style={{'margin-top':'150px'}}
+                            className="btn btn-orange"
+                            onClick={ onFindGameClick }>
+                        Играть
+                    </button>
+                );
                 break;
         }
 

@@ -23,18 +23,18 @@ export default (socket, data) => {
     if (!userAnswers.answers.has(currentQuestionId)) {
 
         //Является ли ответ пользователя правильным
-        const isCorrect = answerId === currentQuestion.correctAnswerId;
+        const isCorrectAnswer = answerId === currentQuestion.correctAnswerId;
 
-        if (isCorrect) {
+        if (isCorrectAnswer) {
             userAnswers.correctAnswers++;
             userAnswers.points += 10;
         }
 
         userAnswers.answers.set(currentQuestionId, {
             answerId: answerId,
-            correctAnswer: isCorrect
+            isCorrectAnswer: isCorrectAnswer
         });
 
-        sendMessage(socket, answerResult(answerId, isCorrect));
+        sendMessage(socket, answerResult(answerId, isCorrectAnswer));
     }
 }
