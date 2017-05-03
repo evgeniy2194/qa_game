@@ -8,7 +8,6 @@ const initialState = {
         accessToken: '',
         authKey: '',
         user: {
-            uid: '',
             firstName: '',
             lastName: ''
         }
@@ -26,7 +25,7 @@ const initialState = {
     //Описание игры
     game: {
         // waitingPayers: false,       //Стоит ли игрок в очереди
-        gameWillStart: true,       //Игра начнется через несколько секунд
+        gameWillStart: false,       //Игра начнется через несколько секунд
         iSgame: false,              //Идет ли игра
         gameId: 0,                  //Ид игры
         users: [],                  //Игроки в комнате
