@@ -32,6 +32,13 @@ export function answerResult(answerId, correctAnswer){
     }
 }
 
+export function gameResult(data) {
+    return {
+        type: "GAME_RESULT",
+        data: data
+    }
+}
+
 // export function gameResult(data) {
 //     return {
 //         type: "GAME_RESULT",

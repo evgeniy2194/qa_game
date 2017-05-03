@@ -65,7 +65,7 @@ export default function () {
                 let interval = setInterval(() => {
 
                     //Если вопросов нет - конец игры
-                    if (questionNumber === 4) {
+                    if (questionNumber === questions.length) {
                         clearInterval(interval);
 
                         const usersAnswers = currentGame.usersAnswers;
@@ -135,14 +135,13 @@ export default function () {
 
                         const question = questions[questionNumber];
                         questionNumber++;
-
                         //Записываем вопрос в текущую игру
                         currentGame.currentQuestion = question;
 
                         //Отправляем игроку новый вопрос
                         sendMessage(players, sendQuestion({
                                 questionNumber: questionNumber, //Номер вопроса
-                                totalQuestion: totalQuestion,   //Всего вопросов
+                                totalQuestion: questions.length,   //Всего вопросов
                                 question: question.question,    //Вопрос
                                 answers: question.answers,      //Ответы
                             })
