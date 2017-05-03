@@ -23,7 +23,7 @@ export default function (state = {}, action) {
         case "GAME_RESULT":
             //Обнуляем игру
             store = {
-                waitingPayers: false,
+                status: null,
                 gameWillStart: false,       //Игра начнется через несколько секунд
                 iSgame: false,              //Идет ли игра
                 gameId: 0,                  //Ид игры

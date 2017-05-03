@@ -25,7 +25,7 @@ const initialState = {
     },
     //Описание игры
     game: {
-        waitingPayers: false,       //Стоит ли игрок в очереди
+        status: null,               //Состояние игры
         gameWillStart: false,       //Игра начнется через несколько секунд
         iSgame: false,              //Идет ли игра
         gameId: 0,                  //Ид игры

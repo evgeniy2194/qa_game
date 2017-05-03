@@ -4,6 +4,8 @@ export const CANCEL_FIND_GAME   = 'CANCEL_FIND_GAME';
 export const START_GAME         = 'START_GAME';
 export const ANSWER_GAME        = 'ANSWER_GAME';
 
+import {SEARCH_PLAYERS} from "../constants/game";
+
 export function resetGame(){
     return {
         type: RESET_GAME,
@@ -13,7 +15,7 @@ export function resetGame(){
 export function findGame(){
     return {
         type: FIND_GAME,
-        data: { waitingPayers: true },
+        data: { status: SEARCH_PLAYERS },
         socket: {
             action: FIND_GAME
         }
@@ -23,7 +25,7 @@ export function findGame(){
 export function cancelFindGame(){
     return {
         type: CANCEL_FIND_GAME,
-        data: { waitingPayers: false },
+        data: { status: null },
         socket: {
             action: CANCEL_FIND_GAME
         }
