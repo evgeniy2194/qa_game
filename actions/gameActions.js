@@ -2,8 +2,7 @@ export function startGame(gameId, users){
     return {
         type: "START_GAME",
         data: {
-            gameWillStart: false,
-            iSgame: true,
+            status: 'IS_GAME',
             gameId: gameId,
             users: users
         }

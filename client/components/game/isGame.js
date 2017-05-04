@@ -26,6 +26,10 @@ export default class isGame extends Component {
         return className;
     }
 
+    onAnswerQuestionClick(gameId, answerId) {
+        this.props.onAnswerQuestionClick(gameId, answerId);
+    }
+
     render() {
 
         const game = this.props.game;
@@ -36,7 +40,7 @@ export default class isGame extends Component {
                     Играют: <br/>
                     { game.users.map(
                         (user) => {
-                            return ( <div>{ user.firstName } { user.lastName }</div> );
+                            return ( <div key={user.uid}>{ user.firstName } { user.lastName }</div> );
                         })
                     }
                 </div>
@@ -51,7 +55,7 @@ export default class isGame extends Component {
                             <button key={ answer.id }
                                     className={ this.getAnswerButtonColor(answer.id) }
                                     disabled={ !!game.chosenAnswer }
-                                    onClick={ this.props.onAnswerGameClick(game.gameId, answer.id)}>
+                                    onClick={ this.onAnswerQuestionClick.bind(this, game.gameId, answer.id)}>
                                 { answer.answer }
                             </button>
                         );

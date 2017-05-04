@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 
 import FindGameComponent from './game/findGameComponent';
 import WaitingGameStartComponent from './game/waitingGameStart';
+import ShowGameResultComponent from './game/showGameResult';
 import IsGameComponent from './game/isGame';
-import {GAME_WILL_START, FIND_GAME, IS_GAME} from "../constants/game";
+import {GAME_WILL_START, FIND_GAME, IS_GAME, SHOW_GAME_RESULT} from "../constants/game";
 
 
 export default class Game extends Component {
@@ -14,7 +15,7 @@ export default class Game extends Component {
         const onFindGameClick = this.props.onFindGameClick;
 
         let gameTpl;
-        console.log(game.status);
+
         switch (game.status) {
             case GAME_WILL_START:
                 gameTpl = <WaitingGameStartComponent/>;
@@ -25,39 +26,23 @@ export default class Game extends Component {
             case IS_GAME:
                 gameTpl = (
                     <IsGameComponent
-                        onAnswerClick={this.props.onAnswerClick}
+                        onAnswerQuestionClick={this.props.onAnswerQuestionClick}
                         game={this.props.game}/>
                 );
                 break;
-            default:
+            case SHOW_GAME_RESULT:
                 gameTpl = (
-                    <button style={{'margin-top':'150px'}}
-                            className="btn btn-orange"
-                            onClick={ onFindGameClick }>
-                        Играть
-                    </button>
+                    <div>
+                        <ShowGameResultComponent result={game.gameResut}/>
+                        <button className="btn btn-orange" onClick={ onFindGameClick }>Играть еще</button>
+                    </div>
                 );
+                break;
+            default:
+                gameTpl += <button className="btn btn-orange" onClick={ onFindGameClick }>Играть</button>;
                 break;
         }
 
-        return gameTpl;
+        return <div style={{'marginTop': '150px'}}>{gameTpl}</div>;
     }
 }
-
-// if (game.showGameResult) {
-//
-//     const result = game.gameResut;
-//     const keys = Object.keys(result);
-//
-//     keys.sort().reverse();
-//
-//     keys.forEach(key => {
-//         const users = result[key];
-//
-//         users.forEach(user => {
-//             tpl += key + ' ' + user.firstName + ' ' + user.lastName + ' coins: ' + user.coins + ' exp: ' + user.exp + ' gems: ' + user.gems;
-//         });
-//     });
-//
-//     tpl = ( <div><span>Результаты игры:</span><br/>{ tpl } </div>);
-// }

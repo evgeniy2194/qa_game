@@ -1,4 +1,5 @@
 import {CANCEL_FIND_GAME, START_GAME, ANSWER_GAME} from '../actions/gameActions';
+import {SHOW_GAME_RESULT} from '../constants/game';
 import {FIND_GAME} from "../constants/game";
 
 export default function (state = {}, action) {
@@ -24,7 +25,7 @@ export default function (state = {}, action) {
         case "GAME_RESULT":
             //Обнуляем игру
             store = {
-                status: null,
+                status: SHOW_GAME_RESULT,
                 gameId: 0,                  //Ид игры
                 users: [],                  //Игроки в комнате
                 totalQuestion: 0,           //Всего вопросов
