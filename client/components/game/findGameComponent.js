@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default props => (
     <div>
         <span>Ищем игроков...</span><br/>
