@@ -62,11 +62,12 @@ export default function () {
                 sendMessage(players, startGame(game._id, game.users));
 
                 //Отправляем новые вопросы по таймауту
-                let interval = setInterval(() => {
+                let interval = setDeceleratingTimeout(() => {
 
                     //Если вопросов нет - конец игры
                     if (questionNumber === questions.length) {
                         clearInterval(interval);
+                        console.log(interval);
 
                         const usersAnswers = currentGame.usersAnswers;
 
@@ -139,18 +140,34 @@ export default function () {
                         currentGame.currentQuestion = question;
 
                         //Отправляем игроку новый вопрос
-                        sendMessage(players, sendQuestion({
-                                questionNumber: questionNumber, //Номер вопроса
-                                totalQuestion: questions.length,   //Всего вопросов
-                                question: question.question,    //Вопрос
-                                answers: question.answers,      //Ответы
-                            })
-                        );
+                        var questionToSend = {
+                            questionNumber: questionNumber, //Номер вопроса
+                            totalQuestion: questions.length,   //Всего вопросов
+                            question: question.question,    //Вопрос
+                            answers: question.answers,      //Ответы
+                        };
+                        sendMessage(players, sendQuestion(questionToSend));
                     }
-                }, roundTime);
+
+                }, roundTime, questions.length+1 );
             });
         });
     } catch (err) {
         console.trace(err);
     }
 }
+
+function setDeceleratingTimeout(callback, factor, times){
+
+    var internalCallback = function(tick, counter) {
+        return function() {
+            if (--tick >= 0) {
+
+                setTimeout(internalCallback, factor);
+                callback();
+            }
+        }
+    }(times, 0);
+
+    setTimeout(internalCallback, 0);
+};
