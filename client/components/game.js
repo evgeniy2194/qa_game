@@ -15,7 +15,7 @@ export default class Game extends Component {
         const onFindGameClick = this.props.onFindGameClick;
 
         let gameTpl;
-        console.log(game.status);
+
         switch (game.status) {
             case GAME_WILL_START:
                 gameTpl = <WaitingGameStartComponent/>;

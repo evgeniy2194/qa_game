@@ -1,12 +1,13 @@
+import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
-import React, {Component} from 'react';
 import {onFindGameClick, onCancelFindGameClick, onAnswerQuestionClick} from '../actions/gameActions';
 import Preload from './preload';
 import CoinsArea from './coinsArea';
 import LevelArea from './levelArea';
 import RatingArea from './ratingArea';
 import Game from './game';
+import FriendsList from './friendsList';
 
 class App extends Component {
 
@@ -27,6 +28,7 @@ class App extends Component {
                     <LevelArea user={ props.user }/>
                     <CoinsArea coins={ props.user.coins } gems={ props.user.gems }/>
                     <RatingArea />
+                    <FriendsList friends={this.props.user.friends}/>
                 </div>
             );
         }

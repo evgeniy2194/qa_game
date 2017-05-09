@@ -22,6 +22,7 @@ const initialState = {
         level: 1,
         coins: 0,
         gems: 0,
+        friends: []
     },
     //Описание игры
     game: {

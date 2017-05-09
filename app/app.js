@@ -10,7 +10,8 @@ var compiler = webpack(webpackConfig);
 
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig.output.publicPath }));
 app.use(webpackHotMiddleware(compiler));
-app.use(express.static(path.join(__dirname, 'static')));
+
+app.use('/static', express.static(path.join(__dirname, '../static')));
 
 app.get("/", function(req, res) {
     res.sendFile(path.join(__dirname + '/../static/index.html'));

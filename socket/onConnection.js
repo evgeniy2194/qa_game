@@ -8,9 +8,6 @@ export default function(socket) {
     let query = socket.handshake.query;
     let uid = query.uid;
 
-    console.log('[SOCKET]', 'uid: ', uid, 'new connection: ' + socket.id);
-
-
     //Проверяем авторизирован ли пользователь
     if (!checkAuthKey(uid, query.authKey)) {
         socket.disconnect();
