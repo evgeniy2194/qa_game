@@ -1,6 +1,6 @@
 import GamesStore from '../store/gamesStore';
 import {answerResult} from '../actions/gameActions';
-import sendMessage from '../socket/sendMessage';
+import sendMessage from './sendMessage';
 
 export default (socket, data) => {
 
