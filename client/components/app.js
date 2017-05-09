@@ -8,8 +8,13 @@ import LevelArea from './levelArea';
 import RatingArea from './ratingArea';
 import Game from './game';
 import FriendsList from './friendsList';
+import VK from '../libs/vk';
 
 class App extends Component {
+
+    showInviteBox() {
+        VK.callMethod("showInviteBox");
+    }
 
     render() {
         const props = this.props;
@@ -28,7 +33,7 @@ class App extends Component {
                     <LevelArea user={ props.user }/>
                     <CoinsArea coins={ props.user.coins } gems={ props.user.gems }/>
                     <RatingArea />
-                    <FriendsList friends={this.props.user.friends}/>
+                    <FriendsList friends={this.props.user.friends} showIniteBox={this.showInviteBox}/>
                 </div>
             );
         }
