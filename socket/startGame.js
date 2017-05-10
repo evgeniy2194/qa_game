@@ -157,6 +157,7 @@ export default function () {
     }
 }
 
+
 function setDeceleratingTimeout(callback, factor, times){
 
     var internalCallback = function(tick, counter) {
