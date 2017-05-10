@@ -3,7 +3,6 @@ import {SHOW_GAME_RESULT} from '../constants/game';
 import {FIND_GAME} from "../constants/game";
 
 export default function (state = {}, action) {
-    console.log('[GAME_REDUCER]', action);
     let store;
 
     switch (action.type) {

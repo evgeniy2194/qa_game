@@ -18,10 +18,12 @@ const initialState = {
         authKey: '',
         firstName: '',
         lastName: '',
-        exp: 0,
+        totalExp: 0,
+        expToNextLevel: 0,
         level: 1,
         coins: 0,
         gems: 0,
+        friends: []
     },
     //Описание игры
     game: {

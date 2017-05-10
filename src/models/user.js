@@ -12,7 +12,11 @@ const userSchema = new Schema({
         type: Number,
         default: 1
     },
-    exp: {                  //Опыта всего за игру
+    totalExp: {                  //Опыта всего за игру
+        type: Number,
+        default: 0
+    },
+    expToNextLevel: {                 //Нужно опыта до следующего уровня
         type: Number,
         default: 0
     },

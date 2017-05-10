@@ -2,16 +2,13 @@ import https from 'https';
 import fs from 'fs';
 import mongoose from 'mongoose';
 import config from './config/config';
-import app from './app/app';
-import { createSocket } from './socket/socket';
+import app from './src/app';
+import { createSocket } from './src/socket/socket';
 
-var privateKey  = fs.readFileSync('ssl/server.key', 'utf8');
-var certificate = fs.readFileSync('ssl/server.crt', 'utf8');
-
-var credentials = { key: privateKey, cert: certificate };
-
-var httpsServer = https.createServer(credentials, app);
-var port = config.app.port;
+const privateKey  = fs.readFileSync('config/ssl/server.key', 'utf8');
+const certificate = fs.readFileSync('config/ssl/server.crt', 'utf8');
+const httpsServer = https.createServer({ key: privateKey, cert: certificate }, app);
+const port = config.app.port;
 
 createSocket(httpsServer);
 
