@@ -1,4 +1,4 @@
-import GamesStore from '../store/gamesStore';
+import {GamesStore} from '../utils/store';
 import {answerResult} from '../actions/gameActions';
 import sendMessage from './sendMessage';
 

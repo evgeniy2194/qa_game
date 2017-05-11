@@ -2,8 +2,7 @@ import socketio from 'socket.io';
 import onConnection from './onConnection';
 import startGame from './startGame';
 import onAnswer from './onAnswer';
-import QueueStore from '../store/queueStore';
-import UsersStore from '../store/usersStore';
+import { QueueStore, UsersStore } from '../utils/store';
 import config from '../../config/config';
 
 let io = null;

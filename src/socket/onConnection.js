@@ -1,10 +1,10 @@
 import checkAuthKey from '../utils/chekAuthKey';
-import { sendUserInfo } from '../actions/userActions';
+import {sendUserInfo} from '../actions/userActions';
 import User from '../models/user';
-import UserStore from '../store/usersStore';
+import {UsersStore} from '../utils/store';
 import {getExpToLevel} from "../utils/levelCalculation";
 
-export default function(socket) {
+export default function (socket) {
 
     let query = socket.handshake.query;
     let uid = query.uid;
@@ -25,7 +25,7 @@ export default function(socket) {
             //Если не нашли юзера - создаем
             if (user) {
                 //Сохраняем пользователя в хранилище
-                UserStore.add(user._id, user);
+                UsersStore.add(user._id, user);
                 socket.userId = user._id;
                 //Отправляем клиенту данные о пользователе
                 socket.emit('message', sendUserInfo(user));
@@ -40,7 +40,7 @@ export default function(socket) {
                         throw err;
                     }
                     //Сохраняем пользователя в хранилище
-                    UserStore.add(user._id, user);
+                    UsersStore.add(user._id, user);
                     socket.userId = user._id;
                     //Отправляем клиенту данные о пользователе
                     socket.emit('message', sendUserInfo(user));

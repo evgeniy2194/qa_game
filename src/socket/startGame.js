@@ -1,10 +1,8 @@
 import shuffle from 'shuffle-array';
 import Question from '../models/question';
 import Game from '../models/game';
-import GamesStore from '../store/gamesStore';
-import QueueStore from '../store/queueStore';
-import UsersStore from '../store/usersStore';
-import config from '../config/config';
+import { GamesStore, QueueStore, UsersStore } from '../utils/store';
+import config from '../../config/config';
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
 import {startGame, sendQuestion, gameResult} from '../actions/gameActions';

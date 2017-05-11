@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import VK from '../libs/vk';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
 import {onFindGameClick, onCancelFindGameClick, onAnswerQuestionClick} from '../actions/gameActions';
@@ -8,32 +9,18 @@ import LevelArea from './levelArea';
 import RatingArea from './ratingArea';
 import Game from './game';
 import FriendsList from './friendsList';
-import VK from '../libs/vk';
 import SettingsArea from "./settings";
+import {exitFullscreen, toggleFullscreen} from "../utils/fullscreen";
 
 class App extends Component {
 
     showInviteBox() {
+        exitFullscreen();
         VK.callMethod("showInviteBox");
     }
 
     onFullScreenClick() {
-        let elem = document.getElementById("app");
-
-        if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement){
-        // if (!document.fullScreen && !document.webkitFullScreen && !document.mozFullScreen) {
-            if (elem.mozRequestFullScreen) {
-                elem.mozRequestFullScreen();
-            } else {
-                elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-            }
-        } else {
-            if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else {
-                document.webkitCancelFullScreen();
-            }
-        }
+        toggleFullscreen();
     }
 
     render() {
