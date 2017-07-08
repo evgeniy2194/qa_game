@@ -24,25 +24,8 @@ class StoreClass {
     }
 }
 
-class QueueStoreClass extends StoreClass {
-
-    cut(number) {
-        let players = [];
-        let j = 0;
-
-        for (let prop in this.store) {
-            if (j >= number) break;
-
-            players.push(this.store[prop]);
-            delete this.store[prop];
-        }
-
-        return players;
-    }
-}
-
 let UsersStore = new StoreClass();
 let GamesStore = new StoreClass();
-let QueueStore = new QueueStoreClass();
+let QueueStore = new StoreClass();
 
 export {UsersStore, GamesStore, QueueStore};

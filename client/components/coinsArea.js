@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 export default class CoinsArea extends Component {
 
     render() {
-        return <div id="coinsArea">
+        return <div id="coins-area">
             <span>
                 <img style={{width: "30px", height: "30px"}} src="http://www.iconshock.com/img_jpg/BETA/accounting/jpg/128/coin_icon.jpg"/>
                 { this.props.coins }

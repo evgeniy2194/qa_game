@@ -5,19 +5,19 @@ import path from 'path';
 import express from 'express';
 import webpackConfig from '../config/webpack.config';
 
-var app = new express();
-var compiler = webpack(webpackConfig);
+let app = new express();
+let compiler = webpack(webpackConfig);
 
-app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: webpackConfig.output.publicPath }));
+app.use(webpackDevMiddleware(compiler, {noInfo: true, publicPath: webpackConfig.output.publicPath}));
 app.use(webpackHotMiddleware(compiler));
 
 app.use('/static', express.static(path.join(__dirname, '../static')));
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname + '/../static/index.html'));
 });
 
-app.all('/api', function(req, res){
+app.all('/api', function (req, res) {
     res.send('It is api man!');
     res.close();
 });

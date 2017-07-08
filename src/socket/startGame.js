@@ -1,18 +1,16 @@
 import shuffle from 'shuffle-array';
 import Question from '../models/question';
 import Game from '../models/game';
-import { GamesStore, QueueStore, UsersStore } from '../utils/store';
-import config from '../../config/config';
+import { GamesStore, UsersStore } from '../utils/store';
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
 import {startGame, sendQuestion, gameResult} from '../actions/gameActions';
 import {getExpToLevel, getLevelByExp} from "../utils/levelCalculation";
 
-export default function () {
+export default function (players, gameConfig) {
 
-    const totalQuestion = config.game.totalQuestion;    //Колл-во вопросов в игре
-    const playersCount = config.game.playersCount;      //Колл-во игроков в игре
-    const roundTime = config.game.roundTime;            //Время одного раунда
+    const totalQuestion = gameConfig.totalQuestion;    //Колл-во вопросов в игре
+    const roundTime = gameConfig.roundTime;            //Время одного раунда
 
     let questionNumber = 0;     //Номер вопроса
 
@@ -24,8 +22,6 @@ export default function () {
             //Перемешиваем вопросы
             questions = shuffle(questions);
 
-            //Забираем с очереди 2 игрока для игры
-            let players = QueueStore.cut(playersCount);
             let playerModels = [];
             let usersAnswers = new Map;
 
@@ -143,7 +139,7 @@ export default function () {
                         currentGame.currentQuestion = question;
 
                         //Отправляем игроку новый вопрос
-                        var questionToSend = {
+                        let questionToSend = {
                             questionNumber: questionNumber, //Номер вопроса
                             totalQuestion: questions.length,   //Всего вопросов
                             question: question.question,    //Вопрос
@@ -162,7 +158,7 @@ export default function () {
 
 function setDeceleratingTimeout(callback, factor, times){
 
-    var internalCallback = function(tick, counter) {
+    let internalCallback = function(tick, counter) {
         return function() {
             if (--tick >= 0) {
 
@@ -173,4 +169,4 @@ function setDeceleratingTimeout(callback, factor, times){
     }(times, 0);
 
     setTimeout(internalCallback, 0);
-};
+}

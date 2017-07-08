@@ -43,6 +43,6 @@ export default class Game extends Component {
                 break;
         }
 
-        return <div style={{'marginTop': '150px'}}>{gameTpl}</div>;
+        return <div className="game-area">{gameTpl}</div>;
     }
 }

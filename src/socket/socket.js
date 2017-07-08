@@ -2,7 +2,7 @@ import socketio from 'socket.io';
 import onConnection from './onConnection';
 import startGame from './startGame';
 import onAnswer from './onAnswer';
-import { QueueStore, UsersStore } from '../utils/store';
+import {QueueStore, UsersStore} from '../utils/store';
 import config from '../../config/config';
 
 let io = null;
@@ -17,18 +17,12 @@ export function createSocket(server) {
 
         //Обработка всех входящих сообщений
         socket.on('message', data => {
-
-            switch (data.action){
+            console.log('DEBUG', data.action);
+            switch (data.action) {
                 //Поиск игры
                 case 'FIND_GAME':
-
                     //Добавляем игрока в очередь
                     QueueStore.add(socket.id, socket);
-
-                    //Начинаем игру если есть достаточное колл-во игроков
-                    if(QueueStore.size() >= config.game.playersCount) {
-                        startGame();
-                    }
                     break;
 
                 //Ответ на вопрос
@@ -39,7 +33,7 @@ export function createSocket(server) {
                 //Выход с очереди
                 case 'CANCEL_FIND_GAME':
                     //Удаляем из массива игроков в очереди
-                    QueueStore.remove(socket);
+                    QueueStore.remove(socket.id);
                     break;
 
                 default:
