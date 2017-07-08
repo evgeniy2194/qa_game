@@ -27,6 +27,7 @@ export default class Game extends Component {
                 gameTpl = (
                     <IsGameComponent
                         onAnswerQuestionClick={this.props.onAnswerQuestionClick}
+                        onHintClick={this.props.onHintClick}
                         game={this.props.game}/>
                 );
                 break;

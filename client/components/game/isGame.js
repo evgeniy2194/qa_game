@@ -61,6 +61,10 @@ export default class isGame extends Component {
                         );
                     })
                 }
+                <br/>
+                <div className="hints">
+                    <button>50/50</button>
+                </div>
             </div>
         )
     }
