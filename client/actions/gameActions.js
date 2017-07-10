@@ -1,6 +1,7 @@
 export const CANCEL_FIND_GAME = 'CANCEL_FIND_GAME';
 export const START_GAME = 'START_GAME';
 export const ANSWER_GAME = 'ANSWER_GAME';
+export const USE_HINT = 'USE_HINT';
 
 import {FIND_GAME} from "../constants/game";
 
@@ -33,6 +34,21 @@ export function onAnswerQuestionClick(gameId, answerId) {
             data: {
                 gameId: gameId,
                 answerId: answerId
+            }
+        }
+    }
+}
+
+export function onHintClick(hint, gameId, questionId) {
+    return {
+        type: USE_HINT,
+        data: {},
+        socket: {
+            action: USE_HINT,
+            data: {
+                gameId: gameId,
+                questionId: questionId,
+                hint: hint
             }
         }
     }

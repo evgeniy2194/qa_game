@@ -31,10 +31,11 @@ const initialState = {
         gameId: 0,                  //Ид игры
         users: [],                  //Игроки в комнате
         totalQuestion: 0,           //Всего вопросов
+        questionId: null,           //Ид вопроса
         questionNumber: 1,          //Номер вопроса
         question: '',
         chosenAnswer: 0,            //Выбранный ответ
-        isCorrectAnswer: false,       //Верный ответ
+        isCorrectAnswer: false,     //Верный ответ
         answers: [],                //Ответы
         points: 0,                  //Очков в текущей игре
         showGameResult: false,

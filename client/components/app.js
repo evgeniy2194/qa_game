@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import VK from '../libs/vk';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
-import {onFindGameClick, onCancelFindGameClick, onAnswerQuestionClick} from '../actions/gameActions';
+import {onFindGameClick, onCancelFindGameClick, onAnswerQuestionClick, onHintClick} from '../actions/gameActions';
 import Preload from './preload';
 import CoinsArea from './coinsArea';
 import LevelArea from './levelArea';
@@ -36,6 +36,7 @@ class App extends Component {
                           onFindGameClick={ props.onFindGameClick }
                           onCancelFindGameClick={ props.onCancelFindGameClick }
                           onAnswerQuestionClick={ props.onAnswerQuestionClick }
+                          onHintClick={ props.onHintClick }
                     />
                     <LevelArea user={ props.user }/>
                     <SettingsArea onFullScreenClick={this.onFullScreenClick}/>
@@ -59,7 +60,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({onFindGameClick, onCancelFindGameClick, onAnswerQuestionClick}, dispatch);
+    return bindActionCreators({onFindGameClick, onCancelFindGameClick, onAnswerQuestionClick, onHintClick}, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

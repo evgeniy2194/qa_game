@@ -2,6 +2,7 @@ import socketio from 'socket.io';
 import onConnection from './onConnection';
 import startGame from './startGame';
 import onAnswer from './onAnswer';
+import onHint from './onHint';
 import {QueueStore, UsersStore} from '../utils/store';
 import config from '../../config/config';
 
@@ -34,6 +35,11 @@ export function createSocket(server) {
                 case 'CANCEL_FIND_GAME':
                     //Удаляем из массива игроков в очереди
                     QueueStore.remove(socket.id);
+                    break;
+
+                //Использование подсказки
+                case 'USE_HINT':
+                    onHint(socket, data.data);
                     break;
 
                 default:

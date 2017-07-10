@@ -17,7 +17,7 @@ export default class isGame extends Component {
 
         let className = 'btn ';
 
-        if (chosenAnswer == answerId) {
+        if (chosenAnswer === answerId) {
             className += isCorrectAnswer ? 'btn-green' : 'btn-red';
         } else {
             className += 'btn-orange';
@@ -28,6 +28,10 @@ export default class isGame extends Component {
 
     onAnswerQuestionClick(gameId, answerId) {
         this.props.onAnswerQuestionClick(gameId, answerId);
+    }
+
+    onHintClick(hint, gameId, questionId){
+        this.props.onHintClick(hint, gameId)
     }
 
     render() {
@@ -63,7 +67,7 @@ export default class isGame extends Component {
                 }
                 <br/>
                 <div className="hints">
-                    <button>50/50</button>
+                    <button onClick={ this.onHintClick.bind(this, '50/50', game.gameId, game.questionId) }>50/50</button>
                 </div>
             </div>
         )
