@@ -1,4 +1,4 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import {createStore, combineReducers, applyMiddleware} from 'redux';
 import * as reducers from '../reducers/index';
 import promisesMiddleware from '../middlewares/promisesMiddleware';
 import sockerMiddlevare from '../middlewares/socketMiddleware';

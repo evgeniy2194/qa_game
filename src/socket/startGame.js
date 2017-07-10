@@ -1,7 +1,7 @@
 import shuffle from 'shuffle-array';
 import Question from '../models/question';
 import Game from '../models/game';
-import { GamesStore, UsersStore } from '../utils/store';
+import {GamesStore, UsersStore} from '../utils/store';
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
 import {startGame, sendQuestion, gameResult} from '../actions/gameActions';
@@ -118,7 +118,7 @@ export default function (players, gameConfig) {
                                 if (err) throw err;
 
                                 //Обновляем юзера
-                                players.forEach(player =>{
+                                players.forEach(player => {
                                     if (player.userId === userId) {
                                         sendMessage(player, sendUserInfo(user));
                                     }
@@ -148,7 +148,7 @@ export default function (players, gameConfig) {
                         sendMessage(players, sendQuestion(questionToSend));
                     }
 
-                }, roundTime, questions.length+1 );
+                }, roundTime, questions.length + 1);
             });
         });
     } catch (err) {
@@ -156,10 +156,10 @@ export default function (players, gameConfig) {
     }
 }
 
-function setDeceleratingTimeout(callback, factor, times){
+function setDeceleratingTimeout(callback, factor, times) {
 
-    let internalCallback = function(tick, counter) {
-        return function() {
+    let internalCallback = function (tick, counter) {
+        return function () {
             if (--tick >= 0) {
 
                 setTimeout(internalCallback, factor);

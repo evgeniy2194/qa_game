@@ -11,7 +11,7 @@ const questionSchema = new Schema({
             ref: 'user'
         }
     }],
-    questions:[{                    //Вопросы
+    questions: [{                    //Вопросы
         question: String,
         _id: {
             type: mongoose.Schema.Types.ObjectId,

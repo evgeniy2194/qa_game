@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react'
+import React, {PropTypes, Component} from 'react'
 
 export default class UserInfo extends Component {
     click() {
@@ -7,8 +7,8 @@ export default class UserInfo extends Component {
 
     render() {
         const firstName = this.props.user.firstName;
-        const lastName  = this.props.user.lastName;
-        const uid       = this.props.user.uid;
+        const lastName = this.props.user.lastName;
+        const uid = this.props.user.uid;
 
         return <div>
             <p>Привет, {firstName} {lastName}!</p>

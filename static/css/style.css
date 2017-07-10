@@ -1,7 +1,7 @@
 
 html, body {
     width: 100%;
-    height:100%;
+    height: 100%;
 }
 
 * {
@@ -39,16 +39,16 @@ html, body {
     position: fixed;
     padding: 10px;
     margin: 5px;
-    border:1px solid #ddd;
+    border: 1px solid #ddd;
 }
 
 #level-area {
-    top:0;
+    top: 0;
     left: 0px;
 }
 
 #coins-area {
-    top:0;
+    top: 0;
     right: 0px;
 }
 
@@ -97,7 +97,7 @@ html, body {
 #settings-area {
     position: fixed;
     right: 100px;
-    top:0;
+    top: 0;
     padding: 5px;
 }
 

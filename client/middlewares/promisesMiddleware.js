@@ -1,12 +1,12 @@
 const middleware = store => next => action => {
 
-    if(action.callApi === undefined){
+    if (action.callApi === undefined) {
         return next(action);
     }
 
-    const [ startAction, successAction, failureAction ] = action.callApi.actions;
+    const [startAction, successAction, failureAction] = action.callApi.actions;
 
-    store.dispatch({ type: startAction });
+    store.dispatch({type: startAction});
 
     action.promise
         .then((data) => {

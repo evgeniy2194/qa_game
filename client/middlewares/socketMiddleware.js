@@ -2,7 +2,7 @@ import socket from '../socket';
 
 const middleware = store => next => action => {
 
-    if(action.socket !== undefined){
+    if (action.socket !== undefined) {
         socket.emit('message', action.socket);
     }
 

@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import config from '../../config/config';
 
-export default function checkAuthKey(uid, authKey){
+export default function checkAuthKey(uid, authKey) {
 
     const appId = config.app.appId;
     const apiSecret = config.app.apiSecret;

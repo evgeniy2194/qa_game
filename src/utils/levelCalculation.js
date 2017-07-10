@@ -3,5 +3,5 @@ export function getExpToLevel(lvl) {
 }
 
 export function getLevelByExp(exp) {
-    return Math.ceil(Math.sqrt(exp/100));
+    return Math.ceil(Math.sqrt(exp / 100));
 }
