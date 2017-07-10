@@ -34,15 +34,13 @@ const initialState = {
         points: 0,                      //Очков в текущей игре
         showGameResult: false,
         gameResut: [],
-        round: {                        //Данные об игровом раунде
-            questionId: null,           //Ид вопроса
-            questionNumber: 1,          //Номер вопроса
-            question: '',
-            chosenAnswer: 0,            //Выбранный ответ
-            isCorrectAnswer: false,     //Верный ответ
-            answers: [],                //Ответы
-            wrongAnswers: [],           //Неверные ответы (При использовании подсказки)
-        }
+        questionId: null,           //Ид вопроса
+        questionNumber: 1,          //Номер вопроса
+        question: '',
+        chosenAnswer: 0,            //Выбранный ответ
+        isCorrectAnswer: false,     //Верный ответ
+        answers: [],                //Ответы
+        wrongAnswers: [],           //Неверные ответы (При использовании подсказки)
     }
 };
 

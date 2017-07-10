@@ -1,16 +1,15 @@
 import sendMessage from './sendMessage';
-import {GameStore} from '../utils/store';
+import {GamesStore} from '../utils/store';
 import {sendWrongAnswers} from '../actions/gameActions';
 import shuffle from 'shuffle-array';
 
 export default (socket, data) => {
-    const {hint, gameId, questionId} = data;
-
-    const game = GameStore.get(gameId);
-    const question = game.round.question;
-    const answers = game.round.question.answers;
-
-    shuffle(answers);
+    const hint = data.hint;
+    const gameId = data.gameId;
+    const questionId = data.questionId;
+    const game = GamesStore.get(gameId);
+    const question = game.currentQuestion;
+    const answers = shuffle(question.answers);
 
     let wrongAnswers = [];
     let count = 0;
@@ -18,7 +17,7 @@ export default (socket, data) => {
     answers.forEach(answer => {
         if (question.correctAnswerId !== answer.id && count < 2) {
             count++;
-            wrongAnswers.push(answer);
+            wrongAnswers.push(answer.id);
         }
     });
 

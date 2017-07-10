@@ -20,8 +20,10 @@ export default function (state = {}, action) {
         case ANSWER_GAME:
         case "START_GAME":
         case "ANSWER_RESULT":
-        case "WRONG_ANSWERS":
             return {...state, ...action.data};
+        case "WRONG_ANSWERS":
+            store = {wrongAnswers: action.data};
+            return {...state, ...store};
         case "GAME_RESULT":
             //Обнуляем игру
             store = {

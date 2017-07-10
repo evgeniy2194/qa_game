@@ -39,16 +39,16 @@ export function onAnswerQuestionClick(gameId, answerId) {
     }
 }
 
-export function onHintClick(hint, gameId, questionId) {
+export function onHintClick(data) {
     return {
         type: USE_HINT,
         data: {},
         socket: {
             action: USE_HINT,
             data: {
-                gameId: gameId,
-                questionId: questionId,
-                hint: hint
+                gameId: data.gameId,
+                questionId: data.questionId,
+                hint: data.hint
             }
         }
     }
