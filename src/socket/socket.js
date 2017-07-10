@@ -1,10 +1,8 @@
 import socketio from 'socket.io';
 import onConnection from './onConnection';
-import startGame from './startGame';
 import onAnswer from './onAnswer';
 import onHint from './onHint';
 import {QueueStore, UsersStore} from '../utils/store';
-import config from '../../config/config';
 
 let io = null;
 

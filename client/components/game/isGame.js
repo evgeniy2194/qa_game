@@ -7,13 +7,13 @@ export default class isGame extends Component {
          * Выбранный ответ
          * @type {number}
          */
-        const chosenAnswer = this.props.game.chosenAnswer;
+        const chosenAnswer = this.props.game.round.chosenAnswer;
 
         /**
          * Верный ли ответ
          * @type {boolean}
          */
-        const isCorrectAnswer = this.props.game.isCorrectAnswer;
+        const isCorrectAnswer = this.props.game.round.isCorrectAnswer;
 
         let className = 'btn ';
 
@@ -30,7 +30,7 @@ export default class isGame extends Component {
         this.props.onAnswerQuestionClick(gameId, answerId);
     }
 
-    onHintClick(hint, gameId, questionId){
+    onHintClick(hint, gameId, questionId) {
         this.props.onHintClick(hint, gameId)
     }
 
@@ -49,25 +49,27 @@ export default class isGame extends Component {
                     }
                 </div>
                 <br/>
-                <div>Вопрос { game.questionNumber }/{ game.totalQuestion }</div>
+                <div>Вопрос { game.round.questionNumber }/{ game.totalQuestion }</div>
                 <br/>
-                <div>{ game.question } </div>
+                <div>{ game.round.question } </div>
                 <br/>
-                { game.answers.map(
+                { game.round.answers.map(
                     (answer) => {
                         return (
                             <button key={ answer.id }
                                     className={ this.getAnswerButtonColor(answer.id) }
-                                    disabled={ !!game.chosenAnswer }
+                                    disabled={ !!game.round.chosenAnswer }
                                     onClick={ this.onAnswerQuestionClick.bind(this, game.gameId, answer.id)}>
-                                { answer.answer }
+                                { game.round.wrongAnswers.indexOf(answer.id) === -1 ? answer.answer : '' }
                             </button>
                         );
                     })
                 }
                 <br/>
                 <div className="hints">
-                    <button onClick={ this.onHintClick.bind(this, '50/50', game.gameId, game.questionId) }>50/50</button>
+                    <button onClick={ this.onHintClick.bind(this, '50/50', game.gameId, game.round.questionId) }>
+                        50/50
+                    </button>
                 </div>
             </div>
         )

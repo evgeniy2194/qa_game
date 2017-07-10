@@ -37,3 +37,10 @@ export function gameResult(data) {
         data: data
     }
 }
+
+export function sendWrongAnswers(data) {
+    return {
+        type: "WRONG_ANSWERS",
+        data: data
+    }
+}

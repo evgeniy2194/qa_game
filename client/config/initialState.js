@@ -27,19 +27,22 @@ const initialState = {
     },
     //Описание игры
     game: {
-        status: null,               //Состояние игры
-        gameId: 0,                  //Ид игры
-        users: [],                  //Игроки в комнате
-        totalQuestion: 0,           //Всего вопросов
-        questionId: null,           //Ид вопроса
-        questionNumber: 1,          //Номер вопроса
-        question: '',
-        chosenAnswer: 0,            //Выбранный ответ
-        isCorrectAnswer: false,     //Верный ответ
-        answers: [],                //Ответы
-        points: 0,                  //Очков в текущей игре
+        status: null,                   //Состояние игры
+        gameId: 0,                      //Ид игры
+        users: [],                      //Игроки в комнате
+        totalQuestion: 0,               //Всего вопросов
+        points: 0,                      //Очков в текущей игре
         showGameResult: false,
-        gameResut: []
+        gameResut: [],
+        round: {                        //Данные об игровом раунде
+            questionId: null,           //Ид вопроса
+            questionNumber: 1,          //Номер вопроса
+            question: '',
+            chosenAnswer: 0,            //Выбранный ответ
+            isCorrectAnswer: false,     //Верный ответ
+            answers: [],                //Ответы
+            wrongAnswers: [],           //Неверные ответы (При использовании подсказки)
+        }
     }
 };
 

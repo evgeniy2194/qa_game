@@ -17,9 +17,10 @@ export default function (state = {}, action) {
             };
 
             return {...state, ...action.data, ...store};
-        case "START_GAME":
         case ANSWER_GAME:
+        case "START_GAME":
         case "ANSWER_RESULT":
+        case "WRONG_ANSWERS":
             return {...state, ...action.data};
         case "GAME_RESULT":
             //Обнуляем игру
@@ -33,6 +34,7 @@ export default function (state = {}, action) {
                 chosenAnswer: 0,            //Выбранный ответ
                 isCorrectAnswer: false,       //Верный ответ
                 answers: [],                //Ответы
+                wrongAnswers: [],
                 points: 0,                  //Очков в текущей игре
                 showGameResult: true,
                 gameResut: action.data
