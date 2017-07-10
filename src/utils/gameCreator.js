@@ -4,7 +4,7 @@ class GameCreator {
     startGame;
     config;
 
-    constructor(config, QueueStore, startGame){
+    constructor(config, QueueStore, startGame) {
         this.startGame = startGame;
         this.queue = QueueStore;
         this.config = config;
@@ -24,17 +24,17 @@ class GameCreator {
         let self = this;
         let allPlayers = self.queue.getAll();
 
-        for(let playerId in allPlayers){
+        for (let playerId in allPlayers) {
             self.players.push(allPlayers[playerId]);
         }
 
-        if(self.players.length === self.config.game.playersCount) {
+        if (self.players.length === self.config.game.playersCount) {
             self.startGame(self.players, self.config.game);
             self.removeFromQueue();
         }
     }
 
-    removeFromQueue(){
+    removeFromQueue() {
         let self = this;
 
         self.players.forEach(player => {
