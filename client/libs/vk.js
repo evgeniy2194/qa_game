@@ -160,11 +160,7 @@
 
             w.fastXDM.run(this.id);
 
-            if (window.name.indexOf('fXD') === 0) {
-                this.key = window.name.substr(3);
-            } else {
-                throw Error('Wrong window.name property.');
-            }
+            this.key = window.name.substr(3);
 
             this.caller = window.parent;
 
