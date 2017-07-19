@@ -6,6 +6,7 @@ const config = {
     entry: [
         'webpack-hot-middleware/client',
         'babel-polyfill',
+        'whatwg-fetch',
         './client/index'
     ],
     output: {

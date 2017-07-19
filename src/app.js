@@ -17,8 +17,8 @@ app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname + '/../static/index.html'));
 });
 
-app.all('/api', function (req, res) {
-    res.send('It is api man!');
+app.all('/dev/api', function (req, res) {
+    res.send({ test: 'test' });
     res.close();
 });
 

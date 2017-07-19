@@ -1,4 +1,7 @@
-import VK from '../libs/vk';
+import VKSdk from '../libs/vk';
+import VKSdkDev from '../utils/VKSdkDev';
+
+const VK = process.env.NODE_ENV === 'development' ? VKSdkDev : VKSdk;
 
 const middleware = (store) => next => action => {
 
