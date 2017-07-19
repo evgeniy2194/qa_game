@@ -48,7 +48,8 @@ export function onHintClick(data) {
             data: {
                 gameId: data.gameId,
                 questionId: data.questionId,
-                hint: data.hint
+                hint: data.hint,
+                userId: data.userId
             }
         }
     }

@@ -9,6 +9,14 @@ export default class isGame extends Component {
          */
         const chosenAnswer = this.props.game.chosenAnswer;
 
+        let isWrong = false;
+
+
+        this.props.game.answers.map(answer =>{
+            if(answer.id == answerId){
+                isWrong = answer.isWrong;
+            }
+        });
         /**
          * Верный ли ответ
          * @type {boolean}
@@ -19,7 +27,11 @@ export default class isGame extends Component {
 
         if (chosenAnswer === answerId) {
             className += isCorrectAnswer ? 'btn-green' : 'btn-red';
-        } else {
+        }else if(isWrong) {
+            className += 'btn-outline-secondary';
+
+        }else{
+
             className += 'btn-orange';
         }
 
@@ -30,17 +42,21 @@ export default class isGame extends Component {
         this.props.onAnswerQuestionClick(gameId, answerId);
     }
 
-    onHintClick(hint, gameId, questionId) {
+    onHintClick(hint, gameId, questionId, userId) {
         this.props.onHintClick({
             hint: hint,
             gameId: gameId,
-            questionId: questionId
+            questionId: questionId,
+            userId: userId
         })
     }
 
     render() {
 
         const game = this.props.game;
+        const user = this.props.user;
+
+
 
         return (
             <div>
@@ -62,16 +78,18 @@ export default class isGame extends Component {
                         return (
                             <button key={ answer.id }
                                     className={ this.getAnswerButtonColor(answer.id) }
-                                    disabled={ !!game.chosenAnswer }
-                                    onClick={ this.onAnswerQuestionClick.bind(this, game.gameId, answer.id)}>
-                                { game.wrongAnswers.indexOf(answer.id) === -1 ? answer.answer : '' }
+                                    disabled={ !!game.chosenAnswer ||  answer.isWrong }
+                                    onClick={ this.onAnswerQuestionClick.bind(this, game.gameId, answer.id)}
+                                    >
+                                    {answer.answer}
                             </button>
                         );
                     })
                 }
                 <br/>
                 <div className="hints">
-                    <button onClick={ this.onHintClick.bind(this, '50/50', game.gameId, game.questionId) }>
+                    <button onClick={ this.onHintClick.bind(this, '50/50', game.gameId, game.questionId, user._id) }
+                            disabled={ game.is50HintUsed }>
                         50/50
                     </button>
                 </div>

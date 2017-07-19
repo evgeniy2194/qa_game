@@ -9,7 +9,8 @@ const questionSchema = new Schema({
         _id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user'
-        }
+        },
+        is50HintUsed: Boolean,
     }],
     questions: [{                    //Вопросы
         question: String,

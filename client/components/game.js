@@ -28,7 +28,8 @@ export default class Game extends Component {
                     <IsGameComponent
                         onAnswerQuestionClick={this.props.onAnswerQuestionClick}
                         onHintClick={this.props.onHintClick}
-                        game={this.props.game}/>
+                        game={this.props.game}
+                        user={this.props.user}/>
                 );
                 break;
             case SHOW_GAME_RESULT:

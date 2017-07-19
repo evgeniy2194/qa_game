@@ -33,6 +33,7 @@ class App extends Component {
             tpl = (
                 <div>
                     <Game game={ props.game }
+                          user={ props.user }
                           onFindGameClick={ props.onFindGameClick }
                           onCancelFindGameClick={ props.onCancelFindGameClick }
                           onAnswerQuestionClick={ props.onAnswerQuestionClick }

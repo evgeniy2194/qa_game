@@ -22,7 +22,17 @@ export default function (state = {}, action) {
         case "ANSWER_RESULT":
             return {...state, ...action.data};
         case "WRONG_ANSWERS":
-            store = {wrongAnswers: action.data};
+            store = {answers : []};
+            store.answers = state.answers.map(answer => {
+
+                if(action.data.wrongAnswers.indexOf(answer.id) === -1){
+                    answer.isWrong = false;
+                }else{
+                    answer.isWrong = true;
+                }
+                return answer;
+            });
+            store.is50HintUsed = true;
             return {...state, ...store};
         case "GAME_RESULT":
             //Обнуляем игру
@@ -39,7 +49,8 @@ export default function (state = {}, action) {
                 wrongAnswers: [],
                 points: 0,                  //Очков в текущей игре
                 showGameResult: true,
-                gameResut: action.data
+                gameResut: action.data,
+                is50HintUsed: false
             };
 
             return {...state, ...store};
