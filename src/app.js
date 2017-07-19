@@ -17,8 +17,13 @@ app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname + '/../static/index.html'));
 });
 
+/**
+ * has to return { response: ... } like vk api
+ */
 app.all('/dev/api', function (req, res) {
-    res.send({ test: 'test' });
+    res.send({ response: 'test' });
+
+
     res.close();
 });
 
