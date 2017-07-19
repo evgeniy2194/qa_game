@@ -21,10 +21,18 @@ app.get("/", function (req, res) {
  * has to return { response: ... } like vk api
  */
 app.all('/dev/api', function (req, res) {
-    res.send({ response: 'test' });
 
+    const url = req.query.url;
+    let response = {};
 
-    res.close();
+    switch (url){
+        case 'friends.getAppUsers':
+            response = [20012099];
+            break;
+    }
+
+    res.send({ response: response });
+    res.end();
 });
 
 export default app;
