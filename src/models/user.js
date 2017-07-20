@@ -44,6 +44,9 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    currentGameId: {
+        type: mongoose.Schema.Types.ObjectId,
+    }
 });
 
 const User = mongoose.model('user', userSchema);

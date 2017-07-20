@@ -50,6 +50,10 @@ export default function (players, gameConfig) {
                     usersAnswers: usersAnswers
                 };
 
+                playerModels.forEach(player => {
+                    player.currentGameId = game._id;
+                    player.save();
+                })
                 //Добавляем игру в список активных
                 GamesStore.add(game._id, currentGame);
 
@@ -137,7 +141,7 @@ export default function (players, gameConfig) {
                         questionNumber++;
                         //Записываем вопрос в текущую игру
                         currentGame.currentQuestion = question;
-
+                        currentGame.currentQuestion['questionNumber'] = questionNumber;
                         //Отправляем игроку новый вопрос
                         let questionToSend = {
                             questionNumber: questionNumber, //Номер вопроса
