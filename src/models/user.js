@@ -44,10 +44,6 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    is50HintUsed: {
-        type: Boolean,
-        default: false
-    },
 });
 
 const User = mongoose.model('user', userSchema);

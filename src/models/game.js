@@ -10,7 +10,10 @@ const questionSchema = new Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user'
         },
-        is50HintUsed: Boolean,
+        is50HintUsed: {
+            type: Boolean,
+            default: false
+        },
     }],
     questions: [{                    //Вопросы
         question: String,

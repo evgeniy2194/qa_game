@@ -47,16 +47,12 @@ export default class isGame extends Component {
             hint: hint,
             gameId: gameId,
             questionId: questionId,
-            userId: userId
         })
     }
 
     render() {
 
         const game = this.props.game;
-        const user = this.props.user;
-
-
 
         return (
             <div>
@@ -88,7 +84,7 @@ export default class isGame extends Component {
                 }
                 <br/>
                 <div className="hints">
-                    <button onClick={ this.onHintClick.bind(this, '50/50', game.gameId, game.questionId, user._id) }
+                    <button onClick={ this.onHintClick.bind(this, '50/50', game.gameId, game.questionId) }
                             disabled={ game.is50HintUsed }>
                         50/50
                     </button>

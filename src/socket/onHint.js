@@ -8,7 +8,7 @@ export default (socket, data) => {
     const hint = data.hint;
     const gameId = data.gameId;
     const questionId = data.questionId;
-    const userId = data.userId;
+    const userId = socket.userId;
     const game = GamesStore.get(gameId);
     const question = game.currentQuestion;
     const answers = shuffle(question.answers);
@@ -27,7 +27,7 @@ export default (socket, data) => {
                  }
                  return user;
             });
-
+            game.game.save();
             let wrongAnswers = [];
             let count = 0;
 
