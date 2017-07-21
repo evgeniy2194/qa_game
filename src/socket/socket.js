@@ -2,6 +2,7 @@ import socketio from 'socket.io';
 import onConnection from './onConnection';
 import onAnswer from './onAnswer';
 import onHint from './onHint';
+import onLeaveGame from './onLeaveGame'
 import {QueueStore, UsersStore} from '../utils/store';
 
 let io = null;
@@ -39,7 +40,9 @@ export function createSocket(server) {
                 case 'USE_HINT':
                     onHint(socket, data.data);
                     break;
-
+                case 'LEAVE_GAME':
+                    onLeaveGame(socket);
+                    break;
                 default:
                     break;
             }

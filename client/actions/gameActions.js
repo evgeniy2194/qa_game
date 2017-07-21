@@ -2,6 +2,7 @@ export const CANCEL_FIND_GAME = 'CANCEL_FIND_GAME';
 export const START_GAME = 'START_GAME';
 export const ANSWER_GAME = 'ANSWER_GAME';
 export const USE_HINT = 'USE_HINT';
+export const LEAVE_GAME ='LEAVE_GAME';
 
 import {FIND_GAME} from "../constants/game";
 
@@ -21,6 +22,16 @@ export function onCancelFindGameClick() {
         data: {status: null},
         socket: {
             action: CANCEL_FIND_GAME
+        }
+    }
+}
+
+export function onLeaveGameClick() {
+    return {
+        type: LEAVE_GAME,
+        data: {status: null},
+        socket: {
+            action: LEAVE_GAME
         }
     }
 }

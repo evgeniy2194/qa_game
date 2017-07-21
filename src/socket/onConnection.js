@@ -1,6 +1,6 @@
 import checkAuthKey from '../utils/chekAuthKey';
 import {sendUserInfo} from '../actions/userActions';
-import {startGame, sendQuestion} from '../actions/gameActions';
+import {startGame, sendQuestion, answerResult} from '../actions/gameActions';
 import User from '../models/user';
 import {UsersStore, GamesStore} from '../utils/store';
 import sendMessage from './sendMessage';
@@ -45,12 +45,17 @@ export default function (socket) {
                     const game = GamesStore.get(user.currentGameId);
 
                     if(game) {
-
                         sendMessage(socket, startGame(game.game._id, game.users));
                         game.players.push(socket);
                         const question = game.currentQuestion;
                         const questions = game.questions;
-                        //Отправляем игроку новый вопрос
+
+                        //Отправляем игроку текущий вопрос
+                        let userAnswers = game.usersAnswers.get(userId);
+
+                        const currentQuestion = game.currentQuestion;
+                        const currentQuestionId = currentQuestion._id;
+
                         let questionToSend = {
                             questionNumber: question.questionNumber, //Номер вопроса
                             totalQuestion: questions.length,   //Всего вопросов
@@ -59,6 +64,12 @@ export default function (socket) {
                         };
                         sendMessage(socket, sendQuestion(questionToSend));
 
+                        //Если пользователь уже отвечал на этот вопрос
+                        if (userAnswers.answers.has(currentQuestionId)) {
+                            let answer = userAnswers.answers.get(currentQuestionId);
+                            console.log(answer);
+                            sendMessage(socket, answerResult(answer.answerId, answer.isCorrectAnswer));
+                        }
                     }
 
                 }

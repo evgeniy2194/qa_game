@@ -28,6 +28,7 @@ export default class Game extends Component {
                     <IsGameComponent
                         onAnswerQuestionClick={this.props.onAnswerQuestionClick}
                         onHintClick={this.props.onHintClick}
+                        onLeaveGameClick={this.props.onLeaveGameClick}
                         game={this.props.game}
                         user={this.props.user}/>
                 );

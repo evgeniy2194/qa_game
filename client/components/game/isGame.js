@@ -49,7 +49,9 @@ export default class isGame extends Component {
             questionId: questionId,
         })
     }
-
+    onLeaveGameClick(){
+        this.props.onLeaveGameClick({});
+    }
     render() {
 
         const game = this.props.game;
@@ -87,6 +89,11 @@ export default class isGame extends Component {
                     <button onClick={ this.onHintClick.bind(this, '50/50', game.gameId, game.questionId) }
                             disabled={ game.is50HintUsed }>
                         50/50
+                    </button>
+                </div>
+                <div className="leaveButton">
+                    <button onClick={ this.onLeaveGameClick.bind(this) }>
+                        Выйти из игры
                     </button>
                 </div>
             </div>

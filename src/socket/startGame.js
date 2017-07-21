@@ -62,7 +62,13 @@ export default function (players, gameConfig) {
 
                 //Отправляем новые вопросы по таймауту
                 let interval = setDeceleratingTimeout(() => {
+                    players = currentGame.players;
 
+                    if(players.length == 0){
+                        GamesStore.remove(game._id);
+                        clearInterval(interval);
+                        return;
+                    }
                     //Если вопросов нет - конец игры
                     if (questionNumber === questions.length) {
                         clearInterval(interval);

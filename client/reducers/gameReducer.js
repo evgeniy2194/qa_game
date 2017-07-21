@@ -1,4 +1,4 @@
-import {CANCEL_FIND_GAME, START_GAME, ANSWER_GAME} from '../actions/gameActions';
+import {CANCEL_FIND_GAME, START_GAME, ANSWER_GAME, LEAVE_GAME} from '../actions/gameActions';
 import {SHOW_GAME_RESULT} from '../constants/game';
 import {FIND_GAME} from "../constants/game";
 
@@ -8,9 +8,10 @@ export default function (state = {}, action) {
     switch (action.type) {
         case CANCEL_FIND_GAME:
         case FIND_GAME:
+        case LEAVE_GAME:
         case "GAME_WILL_START":
         case "SEND_QUESTION":
-
+            console.log(action);
             store = {
                 chosenAnswer: false,
                 isCorrectAnswer: null
