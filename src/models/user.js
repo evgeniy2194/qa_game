@@ -1,8 +1,6 @@
 import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-const userSchema = new Schema({
+const userSchema = mongoose.Schema({
     uid: {                  //Ид вконтакте
         type: Number,
         required: true,

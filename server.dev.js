@@ -19,16 +19,18 @@ createSocket(httpsServer);
 
 const gameCreator = new GameCreator(config, QueueStore, startGame);
 
-gameCreator.listen();
+gameCreator.run();
 
-mongoose.connect('mongodb://localhost/game', (err) => {
-    if (err) throw err;
+mongoose.connect('mongodb://localhost/game', {useMongoClient: true});
 
+const db = mongoose.connection;
+
+db.once('open', () => {
     httpsServer.listen(port, function (error) {
-        if (error) {
-            console.error(error);
-        } else {
-            console.info("Server started on port %s.", port);
-        }
+        if (error) throw error;
+
+        console.info("Server started on port %s.", port);
     });
 });
+
+db.on('error', console.error.bind(console, 'connection error:'));

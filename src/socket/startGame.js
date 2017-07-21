@@ -1,4 +1,3 @@
-import shuffle from 'shuffle-array';
 import Question from '../models/question';
 import Game from '../models/game';
 import {GamesStore, UsersStore} from '../utils/store';
@@ -15,13 +14,10 @@ export default function (players, gameConfig) {
     let questionNumber = 0;     //Номер вопроса
 
     try {
-        //Ищем вопросы в базе
-        Question.find().limit(totalQuestion).exec((err, questions) => {
-            if (err) throw err;
+        //Ищем в базе totalQuestion рандомных вопросы
+        //Math.floor( Math.random() * count )
 
-            //Перемешиваем вопросы
-            questions = shuffle(questions);
-
+        Question.aggregate([{$sample: {size: totalQuestion}}]).then(questions => {
             let playerModels = [];
             let usersAnswers = new Map;
 
@@ -38,8 +34,7 @@ export default function (players, gameConfig) {
             Game.create({
                 users: playerModels,
                 questions: questions,
-            }, (err, game) => {
-                if (err) throw err;
+            }).then(game => {
 
                 //Добавляем игру в список игр
                 let currentGame = {
@@ -53,7 +48,8 @@ export default function (players, gameConfig) {
                 playerModels.forEach(player => {
                     player.currentGameId = game._id;
                     player.save();
-                })
+                });
+
                 //Добавляем игру в список активных
                 GamesStore.add(game._id, currentGame);
 
@@ -64,7 +60,7 @@ export default function (players, gameConfig) {
                 let interval = setDeceleratingTimeout(() => {
                     players = currentGame.players;
 
-                    if(players.length == 0){
+                    if (players.length == 0) {
                         GamesStore.remove(game._id);
                         clearInterval(interval);
                         return;
@@ -124,9 +120,7 @@ export default function (players, gameConfig) {
                             user.level = userLevel;
                             user.expToNextLevel = getExpToLevel(userLevel + 1);
 
-                            user.save(function (err) {
-                                if (err) throw err;
-
+                            user.save().then(() => {
                                 //Обновляем юзера
                                 players.forEach(player => {
                                     if (player.userId === userId) {
@@ -160,6 +154,8 @@ export default function (players, gameConfig) {
 
                 }, roundTime, questions.length + 1);
             });
+        }).catch(error => {
+            throw error;
         });
     } catch (err) {
         console.trace(err);

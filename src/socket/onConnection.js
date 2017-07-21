@@ -21,10 +21,7 @@ export default function (socket) {
 
     try {
         //Ищем пользователя, если нет - создаем
-        User.findOne({uid: uid}, (err, user) => {
-            if (err) {
-                throw err;
-            }
+        User.findOne({uid: uid}).then(user => {
 
             //Если не нашли юзера - создаем
             if (user) {
@@ -40,11 +37,11 @@ export default function (socket) {
 
                 //Если у игрока есть незаконченная игра
 
-                if(user.currentGameId){
+                if (user.currentGameId) {
                     //console.log(user);
                     const game = GamesStore.get(user.currentGameId);
 
-                    if(game) {
+                    if (game) {
                         sendMessage(socket, startGame(game.game._id, game.users));
                         game.players.push(socket);
                         const question = game.currentQuestion;
@@ -67,35 +64,33 @@ export default function (socket) {
                         //Если пользователь уже отвечал на этот вопрос
                         if (userAnswers.answers.has(currentQuestionId)) {
                             let answer = userAnswers.answers.get(currentQuestionId);
-                            console.log(answer);
+
                             sendMessage(socket, answerResult(answer.answerId, answer.isCorrectAnswer));
                         }
                     }
 
                 }
-
-
             } else {
                 User.create({
                     uid: uid,
                     firstName: query.firstName,
                     lastName: query.lastName,
                     expToNextLevel: getExpToLevel(2)
-                }, (err, user) => {
-                    if (err) {
-                        throw err;
-                    }
+                }).then(user => {
+                    const userId = String(user._id);
+
                     //Сохраняем пользователя в хранилище
-
-
-                    let userId = String(user._id);
                     UsersStore.add(userId, user);
                     socket.userId = userId;
+
                     //Отправляем клиенту данные о пользователе
                     socket.emit('message', sendUserInfo(user));
                 });
             }
-        });
+        }).catch(error => {
+            console.log('twtssdd');
+            throw error;
+        })
     } catch (err) {
         console.trace(err);
     }

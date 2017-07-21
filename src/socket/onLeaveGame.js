@@ -2,8 +2,6 @@
  * Created by vision on 7/21/17.
  */
 import {GamesStore, UsersStore} from '../utils/store';
-import {answerResult} from '../actions/gameActions';
-import sendMessage from './sendMessage';
 
 export default (socket) => {
 

@@ -1,8 +1,6 @@
 import mongoose from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-const questionSchema = new Schema({
+const questionSchema = mongoose.Schema({
     question: {                 //Вопрос
         type: String,
     },
