@@ -37,7 +37,11 @@ export default class Timer extends Component {
     }
 
     tick() {
-        const diff = Math.round((this.endTime - moment.utc()) / 1000);
+        let diff = Math.round((this.endTime - moment.utc()) / 1000);
+
+        if (diff < 0) {
+            diff = 0
+        }
 
         if (this.state && Math.round(this.state.secondsLeft) !== diff) {
             this.setState({secondsLeft: diff});
@@ -45,7 +49,7 @@ export default class Timer extends Component {
     }
 
     render() {
-        return <div>Пыщ пыщ: { this.state.secondsLeft }</div>
+        return <div>{ this.state.secondsLeft }</div>
     }
 }
 
