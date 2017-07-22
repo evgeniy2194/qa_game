@@ -10,7 +10,7 @@ class GameCreator {
         this.config = config;
     }
 
-    listen() {
+    run() {
         let self = this;
 
         setInterval(function () {

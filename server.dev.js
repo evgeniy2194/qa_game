@@ -5,8 +5,9 @@ import config from './config/config';
 import app from './src/app';
 import {createSocket} from './src/socket/socket';
 import GameCreator from './src/utils/gameCreator';
+import Question from './src/models/question';
 
-import {QueueStore} from './src/utils/store';
+import {QueueStore, QuestionsStore} from './src/utils/store';
 import startGame from './src/socket/startGame';
 
 
@@ -15,15 +16,23 @@ const certificate = fs.readFileSync('config/ssl/server.crt', 'utf8');
 const httpsServer = https.createServer({key: privateKey, cert: certificate}, app);
 const port = config.app.port;
 
-createSocket(httpsServer);
-
+const db = mongoose.connection;
 const gameCreator = new GameCreator(config, QueueStore, startGame);
 
+createSocket(httpsServer);
 gameCreator.run();
 
 mongoose.connect('mongodb://localhost/game', {useMongoClient: true});
 
-const db = mongoose.connection;
+//Load all questions
+Question.find({}).then((data) => {
+    let i = data.length;
+
+    while(i--) {
+        let item = data[i];
+        QuestionsStore.add(String(item._id), item);
+    }
+});
 
 db.once('open', () => {
     httpsServer.listen(port, function (error) {
