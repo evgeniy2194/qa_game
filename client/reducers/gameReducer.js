@@ -11,7 +11,6 @@ export default function (state = {}, action) {
         case LEAVE_GAME:
         case "GAME_WILL_START":
         case "SEND_QUESTION":
-            console.log(action);
             store = {
                 chosenAnswer: false,
                 isCorrectAnswer: null

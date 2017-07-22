@@ -1,3 +1,4 @@
+import moment from 'moment';
 import Game from '../models/game';
 import {GamesStore, UsersStore, QuestionsStore} from '../utils/store';
 import sendMessage from './sendMessage';
@@ -35,7 +36,6 @@ export default function (players, gameConfig) {
             questions: questions,
         }).then(game => {
 
-            //Добавляем игру в список игр
             let currentGame = {
                 game: game,
                 currentQuestion: '',
@@ -44,13 +44,13 @@ export default function (players, gameConfig) {
                 usersAnswers: usersAnswers
             };
 
+            //Добавляем игру в список активных
+            GamesStore.add(game._id, currentGame);
+
             playerModels.forEach(player => {
                 player.currentGameId = game._id;
                 player.save();
             });
-
-            //Добавляем игру в список активных
-            GamesStore.add(game._id, currentGame);
 
             //Игра началась
             sendMessage(players, startGame(game._id, game.users));
@@ -64,6 +64,7 @@ export default function (players, gameConfig) {
                     clearInterval(interval);
                     return;
                 }
+
                 //Если вопросов нет - конец игры
                 if (questionNumber === questions.length) {
                     clearInterval(interval);
@@ -134,21 +135,20 @@ export default function (players, gameConfig) {
 
                     //Отправляем всем ирокам результаты игры
                     sendMessage(players, gameResult(gameRewards));
-                } else {
 
-                    const question = questions[questionNumber];
+                } else {
+                    let question = questions[questionNumber];
+                    let endTime = moment.utc().add('seconds', roundTime / 1000);
+
                     questionNumber++;
+
                     //Записываем вопрос в текущую игру
                     currentGame.currentQuestion = question;
-                    currentGame.currentQuestion['questionNumber'] = questionNumber;
-                    //Отправляем игроку новый вопрос
-                    let questionToSend = {
-                        questionNumber: questionNumber, //Номер вопроса
-                        totalQuestion: questions.length,   //Всего вопросов
-                        question: question.question,    //Вопрос
-                        answers: question.answers,      //Ответы
-                    };
-                    sendMessage(players, sendQuestion(questionToSend));
+                    currentGame.currentQuestion.endTime = endTime;
+                    currentGame.currentQuestion.totalQuestion = questions.length;
+                    currentGame.currentQuestion.questionNumber = questionNumber;
+
+                    sendMessage(players, sendQuestion(currentGame.currentQuestion));
                 }
 
             }, roundTime, questions.length + 1);

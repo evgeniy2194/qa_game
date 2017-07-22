@@ -17,6 +17,7 @@ export function sendQuestion(data) {
             totalQuestion: data.totalQuestion,
             question: data.question,
             answers: data.answers,
+            endTime: data.endTime
         }
     };
 }

@@ -41,7 +41,8 @@ const initialState = {
         isCorrectAnswer: false,     //Верный ответ
         answers: [],                //Ответы
         wrongAnswers: [],           //Неверные ответы (При использовании подсказки)
-        is50HintUsed: false
+        is50HintUsed: false,
+        endTime: null
     }
 };
 

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Timer from '../timer';
 
 export default class isGame extends Component {
 
@@ -9,29 +10,26 @@ export default class isGame extends Component {
          */
         const chosenAnswer = this.props.game.chosenAnswer;
 
-        let isWrong = false;
-
-
-        this.props.game.answers.map(answer =>{
-            if(answer.id == answerId){
-                isWrong = answer.isWrong;
-            }
-        });
         /**
          * Верный ли ответ
          * @type {boolean}
          */
         const isCorrectAnswer = this.props.game.isCorrectAnswer;
 
+        let isWrong = false;
         let className = 'btn ';
+
+        this.props.game.answers.map(answer => {
+            if (answer.id == answerId) {
+                isWrong = answer.isWrong;
+            }
+        });
 
         if (chosenAnswer === answerId) {
             className += isCorrectAnswer ? 'btn-green' : 'btn-red';
-        }else if(isWrong) {
+        } else if (isWrong) {
             className += 'btn-outline-secondary';
-
-        }else{
-
+        } else {
             className += 'btn-orange';
         }
 
@@ -42,22 +40,25 @@ export default class isGame extends Component {
         this.props.onAnswerQuestionClick(gameId, answerId);
     }
 
-    onHintClick(hint, gameId, questionId, userId) {
+    onHintClick(hint, gameId, questionId) {
         this.props.onHintClick({
             hint: hint,
             gameId: gameId,
             questionId: questionId,
         })
     }
-    onLeaveGameClick(){
+
+    onLeaveGameClick() {
         this.props.onLeaveGameClick({});
     }
+
     render() {
 
         const game = this.props.game;
 
         return (
             <div>
+                <Timer endTime={game.endTime}/>
                 <div>
                     Играют: <br/>
                     { game.users.map(
@@ -76,10 +77,10 @@ export default class isGame extends Component {
                         return (
                             <button key={ answer.id }
                                     className={ this.getAnswerButtonColor(answer.id) }
-                                    disabled={ !!game.chosenAnswer ||  answer.isWrong }
+                                    disabled={ !!game.chosenAnswer || answer.isWrong }
                                     onClick={ this.onAnswerQuestionClick.bind(this, game.gameId, answer.id)}
-                                    >
-                                    {answer.answer}
+                            >
+                                {answer.answer}
                             </button>
                         );
                     })

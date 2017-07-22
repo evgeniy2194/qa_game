@@ -1,11 +1,8 @@
 import checkAuthKey from '../utils/chekAuthKey';
-import {sendUserInfo} from '../actions/userActions';
-import {startGame, sendQuestion, answerResult} from '../actions/gameActions';
-import User from '../models/user';
 import {UsersStore, GamesStore} from '../utils/store';
-import sendMessage from './sendMessage';
-
-
+import {sendUserInfo} from '../actions/userActions';
+import User from '../models/user';
+import restoreGame from './restoreGame';
 import {getExpToLevel} from "../utils/levelCalculation";
 
 export default function (socket) {
@@ -25,10 +22,10 @@ export default function (socket) {
 
             //Если не нашли юзера - создаем
             if (user) {
-                //Сохраняем пользователя в хранилищеэ
+                const userId = String(user._id);
                 user._id = String(user._id);
-                let userId = String(user._id);
 
+                //Сохраняем пользователя в хранилище
                 UsersStore.add(userId, user);
                 socket.userId = userId;
 
@@ -36,39 +33,8 @@ export default function (socket) {
                 socket.emit('message', sendUserInfo(user));
 
                 //Если у игрока есть незаконченная игра
-
                 if (user.currentGameId) {
-                    //console.log(user);
-                    const game = GamesStore.get(user.currentGameId);
-
-                    if (game) {
-                        sendMessage(socket, startGame(game.game._id, game.users));
-                        game.players.push(socket);
-                        const question = game.currentQuestion;
-                        const questions = game.questions;
-
-                        //Отправляем игроку текущий вопрос
-                        let userAnswers = game.usersAnswers.get(userId);
-
-                        const currentQuestion = game.currentQuestion;
-                        const currentQuestionId = currentQuestion._id;
-
-                        let questionToSend = {
-                            questionNumber: question.questionNumber, //Номер вопроса
-                            totalQuestion: questions.length,   //Всего вопросов
-                            question: question.question,    //Вопрос
-                            answers: question.answers,      //Ответы
-                        };
-                        sendMessage(socket, sendQuestion(questionToSend));
-
-                        //Если пользователь уже отвечал на этот вопрос
-                        if (userAnswers.answers.has(currentQuestionId)) {
-                            let answer = userAnswers.answers.get(currentQuestionId);
-
-                            sendMessage(socket, answerResult(answer.answerId, answer.isCorrectAnswer));
-                        }
-                    }
-
+                    restoreGame(socket, GamesStore.get(user.currentGameId));
                 }
             } else {
                 User.create({
@@ -88,7 +54,6 @@ export default function (socket) {
                 });
             }
         }).catch(error => {
-            console.log('twtssdd');
             throw error;
         })
     } catch (err) {
