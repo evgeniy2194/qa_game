@@ -1,6 +1,6 @@
 const tableName = 'users';
 
-export default {
+module.exports = {
     up: (queryInterface, Sequelize) => {
         queryInterface.createTable(tableName, {
             id: {
@@ -43,7 +43,7 @@ export default {
                 type: Sequelize.DATE
             }
         }, {
-            charset: 'UTF-8',
+            charset: 'utf8',
         });
 
         queryInterface.addIndex(tableName, ['uid'], {indicesType: 'UNIQUE'});

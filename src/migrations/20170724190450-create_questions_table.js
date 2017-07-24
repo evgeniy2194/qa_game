@@ -1,8 +1,25 @@
-const tableName = 'questionAnswers';
+'use strict';
 
-export default {
+const questions = 'questions';
+const questionAnswers = 'question_answers';
+
+module.exports = {
     up: (queryInterface, Sequelize) => {
-        queryInterface.createTable(tableName, {
+        queryInterface.createTable(questions, {
+            id: {
+                type: Sequelize.INTEGER.UNSIGNED,
+                primaryKey: true,
+                autoIncrement: true
+            },
+            question: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+        }, {
+            charset: 'UTF8',
+        });
+
+        queryInterface.createTable(questionAnswers, {
             id: {
                 type: Sequelize.INTEGER.UNSIGNED,
                 primaryKey: true,
@@ -25,13 +42,14 @@ export default {
                 defaultValue: false
             }
         }, {
-            charset: 'UTF-8',
+            charset: 'UTF8',
         });
 
-        queryInterface.addIndex(tableName, ['questionId']);
+        queryInterface.addIndex(questionAnswers, ['questionId']);
     },
 
     down: (queryInterface, Sequelize) => {
-        return queryInterface.dropTable(tableName);
+        queryInterface.dropTable(questionAnswers);
+        queryInterface.dropTable(questions);
     }
 }

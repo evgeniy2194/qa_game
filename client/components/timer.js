@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import moment from 'moment';
 
-
 export default class Timer extends Component {
 
     timerId = null;
