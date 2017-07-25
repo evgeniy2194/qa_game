@@ -1,25 +1,19 @@
-import mongoose from 'mongoose';
+import sequelize from 'sequelize';
+import questionAnswers from './questionAnswers';
 
-const questionSchema = mongoose.Schema({
-    question: {                 //Вопрос
-        type: String,
+const Question = sequelize.define('question', {
+    id: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        primaryKey: true,
+        autoIncrement: true
     },
-    answers: [{                 //Ответы
-        id: {
-            type: Number,
-            unique: true
-        },
-        answer: String,
-        isWrong: Boolean,
-    }],
-    correctAnswerId: Number,
-    created_at: {               //Дата создания
-        type: Date,
-        default: Date.now
+    question: {
+        type: Sequelize.STRING,
+        allowNull: false,
     }
 });
 
-const Question = mongoose.model('question', questionSchema);
+Question.hasMany(questionAnswers, {as: 'answers'});
 
 export default Question;
 

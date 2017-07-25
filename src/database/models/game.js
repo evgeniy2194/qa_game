@@ -1,57 +1,18 @@
-import mongoose from 'mongoose';
+import sequelize from 'sequelize';
+import User from './user';
+import Question from './question';
 
-const questionSchema = mongoose.Schema({
-    users: [{                       //Игроки
-        firstName: String,
-        lastName: String,
-        _id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'user'
-        },
-        is50HintUsed: {
-            type: Boolean,
-            default: false
-        },
-    }],
-    questions: [{                    //Вопросы
-        question: String,
-        _id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'question'
-        }
-    }],
-    answers: [{                     //Как отвечали игроки на вопросы
-        question: {                 //Вопрос
-            _id: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'question'
-            },
-            usersAnswers: [{             //Ответы
-                userId: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: 'user'
-                },
-                answerId: Number,
-                correct: Boolean
-            }]
-        },
-
-    }],
-    createdAt: {                    //Создана в
-        type: Date,
-        default: Date.now()
+const Game = sequelize.define('game', {
+    id: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        primaryKey: true,
+        autoIncrement: true
     },
-    finishedAt: {                   //Завершилась в
-        type: Date,
-        default: null
-    },
-    winner: {                       //Кто выиграл
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
-        default: null
-    }
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE
 });
 
-const Game = mongoose.model('game', questionSchema);
+Game.hasMany(User,      {as: 'users'});
+Game.hasMany(Question,  {as: 'questions'});
 
 export default Game;

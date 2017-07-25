@@ -1,52 +1,41 @@
-import mongoose from 'mongoose';
+import sequelize from 'sequelize';
 
-const userSchema = mongoose.Schema({
-    uid: {                  //Ид вконтакте
-        type: Number,
-        required: true,
-        unique: true
+const User = sequelize.define('user', {
+    id: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        primaryKey: true,
+        autoIncrement: true
     },
-    level: {                //Уровень
-        type: Number,
-        default: 1
+    uid: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        allowNull: false
     },
-    totalExp: {                  //Опыта всего за игру
-        type: Number,
-        default: 0
+    firstaName: {
+        type: Sequelize.STRING,
+        defaultValue: null,
     },
-    expToNextLevel: {                 //Нужно опыта до следующего уровня
-        type: Number,
-        default: 0
+    lastName: {
+        type: Sequelize.STRING,
+        defaultValue: null,
     },
-    coins: {                //Монет на счету
-        type: Number,
-        default: 0
+    expTotal: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        defaultValue: 0,
     },
-    gems: {                 //Гемов
-        type: Number,
-        default: 0
+    expToLevel: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        defaultValue: 0,
     },
-    firstName: {
-        type: String,
-        required: true
+    coins: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        defaultValue: 0,
     },
-    lastName: {             //Фамилия
-        type: String,
-        required: true
+    gems: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        defaultValue: 0,
     },
-    created_at: {           //Дата создания
-        type: Date,
-        default: Date.now
-    },
-    updated_at: {           //Дата изменения
-        type: Date,
-        default: Date.now
-    },
-    currentGameId: {
-        type: mongoose.Schema.Types.ObjectId,
-    }
+    createdAt: Sequelize.DATE,
+    updatedAt: Sequelize.DATE
 });
-
-const User = mongoose.model('user', userSchema);
 
 export default User;
