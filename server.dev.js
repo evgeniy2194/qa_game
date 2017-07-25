@@ -1,11 +1,11 @@
 import https from 'https';
 import fs from 'fs';
-import Sequelize from 'sequelize';
 import config from './config/config';
 import app from './src/app';
 import {createSocket} from './src/socket/socket';
 import GameCreator from './src/utils/gameCreator';
-import Question from './src/models/question';
+import Question from './src/database/models/question';
+import QuestionAnswer from './src/database/models/QuestionAnswer';
 
 import {QueueStore, QuestionsStore} from './src/utils/store';
 import startGame from './src/socket/startGame';
@@ -19,32 +19,20 @@ const gameCreator = new GameCreator(config, QueueStore, startGame);
 createSocket(httpsServer);
 gameCreator.run();
 
-const sequelize = new Sequelize('game', 'game', 'aq1sw2de3', {
-    host: 'localhost',
-    dialect: 'mysql',
-    pool: {
-        max: 5,
-        min: 0,
-        idle: 10000
-    }
-});
+httpsServer.listen(port, function (error) {
+    if (error) throw error;
 
-sequelize.authenticate().then(() => {
-    httpsServer.listen(port, function (error) {
-        if (error) throw error;
-
-        console.info("Server started on port %s.", port);
-    });
-}).catch(err => {
-    console.error('Unable to connect to the database:', err);
+    console.info("Server started on port %s.", port);
 });
 
 // //Load all questions
-// Question.find({}).then((data) => {
-//     let i = data.length;
-//
-//     while (i--) {
-//         let item = data[i];
-//         QuestionsStore.add(String(item._id), item);
-//     }
-// });
+Question.findAll({include: [{model: QuestionAnswer}]}).then((questions) => {
+    console.log(questions);
+
+    let i = data.length;
+
+    while (i--) {
+        let question = data[i];
+        QuestionsStore.add(question.id, question);
+    }
+});

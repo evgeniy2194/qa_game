@@ -1,8 +1,9 @@
-import sequelize from 'sequelize';
+import Sequelize from 'sequelize';
+import connect from '../connect';
 import User from './user';
 import Question from './question';
 
-const Game = sequelize.define('game', {
+const Game = connect.define('game', {
     id: {
         type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,

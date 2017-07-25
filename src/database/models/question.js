@@ -1,7 +1,8 @@
-import sequelize from 'sequelize';
-import questionAnswers from './questionAnswers';
+import Sequelize from 'sequelize';
+import connect from '../connect';
+import QuestionAnswers from './questionAnswer';
 
-const Question = sequelize.define('question', {
+const Question = connect.define('question', {
     id: {
         type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
@@ -13,7 +14,7 @@ const Question = sequelize.define('question', {
     }
 });
 
-Question.hasMany(questionAnswers, {as: 'answers'});
+Question.hasMany(QuestionAnswers, {as: 'answers'});
 
 export default Question;
 

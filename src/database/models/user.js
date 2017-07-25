@@ -1,6 +1,7 @@
-import sequelize from 'sequelize';
+import Sequelize from 'sequelize';
+import connect from '../connect';
 
-const User = sequelize.define('user', {
+const User = connect.define('user', {
     id: {
         type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,

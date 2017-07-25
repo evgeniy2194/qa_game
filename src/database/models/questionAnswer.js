@@ -1,6 +1,8 @@
-import sequelize from 'sequelize';
+import Sequelize from 'sequelize';
+import connect from '../connect';
+import Question from './question';
 
-const QuestionAnswers = sequelize.define('question_answers', {
+const QuestionAnswer = connect.define('question_answer', {
     id: {
         type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true,
@@ -24,4 +26,6 @@ const QuestionAnswers = sequelize.define('question_answers', {
     }
 });
 
-export default QuestionAnswers;
+QuestionAnswer.hasOne(Question, {as: 'question'});
+
+export default QuestionAnswer;
