@@ -1,6 +1,6 @@
 const games = 'games';
-const gameAnswers = 'game_answers';
-const gamePlayers = 'game_players';
+const gameAnswers   = 'game_answers';
+const gamePlayers   = 'game_players';
 const gameQuestions = 'game_questions';
 
 module.exports = {
@@ -101,7 +101,7 @@ module.exports = {
 
         queryInterface.addIndex(gameQuestions,  ['gameId']);
         queryInterface.addIndex(gamePlayers,    ['gameId']);
-        queryInterface.addIndex(gamePlayers,    ['playerId']);
+        queryInterface.addIndex(gamePlayers,    ['userId']);
         queryInterface.addIndex(gameAnswers,    ['gameId']);
     },
 
