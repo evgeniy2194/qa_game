@@ -111,4 +111,4 @@ module.exports = {
         queryInterface.dropTable(gameAnswers);
         queryInterface.dropTable(games);
     }
-}
+};

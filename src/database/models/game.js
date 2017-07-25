@@ -12,8 +12,8 @@ const Game = connect.define('game', {
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE
 });
-
-Game.hasMany(User,      {as: 'users'});
-Game.hasMany(Question,  {as: 'questions'});
+//
+// Game.hasMany(User,      {as: 'users'});
+// Game.hasMany(Question,  {as: 'questions'});
 
 export default Game;

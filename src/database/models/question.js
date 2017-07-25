@@ -12,6 +12,8 @@ const Question = connect.define('question', {
         type: Sequelize.STRING,
         allowNull: false,
     }
+}, {
+    timestamps: false
 });
 
 Question.hasMany(QuestionAnswers, {as: 'answers'});

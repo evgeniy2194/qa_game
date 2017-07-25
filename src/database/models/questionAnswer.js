@@ -11,10 +11,10 @@ const QuestionAnswer = connect.define('question_answer', {
     questionId: {
         type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
-        references: {
-            model: 'questions',
-            key: 'id'
-        },
+        // references: {
+        //     model: 'questions',
+        //     key: 'id'
+        // },
     },
     answer: {
         type: Sequelize.STRING,
@@ -24,8 +24,10 @@ const QuestionAnswer = connect.define('question_answer', {
         type: Sequelize.BOOLEAN,
         defaultValue: false
     }
+}, {
+    timestamps: false
 });
 
-QuestionAnswer.hasOne(Question, {as: 'question'});
+// QuestionAnswer.belongsTo(Question);
 
 export default QuestionAnswer;

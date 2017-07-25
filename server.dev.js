@@ -1,6 +1,7 @@
 import https from 'https';
 import fs from 'fs';
 import config from './config/config';
+import connect from './src/database/connect';
 import app from './src/app';
 import {createSocket} from './src/socket/socket';
 import GameCreator from './src/utils/gameCreator';
@@ -26,13 +27,11 @@ httpsServer.listen(port, function (error) {
 });
 
 // //Load all questions
-Question.findAll({include: [{model: QuestionAnswer}]}).then((questions) => {
-    console.log(questions);
-
-    let i = data.length;
+Question.findAll({include: [{model: QuestionAnswer, as: 'answers'}]}).then((questions) => {
+    let i = questions.length;
 
     while (i--) {
-        let question = data[i];
+        let question = questions[i];
         QuestionsStore.add(question.id, question);
     }
 });

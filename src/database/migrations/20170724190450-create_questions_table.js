@@ -52,4 +52,4 @@ module.exports = {
         queryInterface.dropTable(questionAnswers);
         queryInterface.dropTable(questions);
     }
-}
+};

@@ -1,6 +1,7 @@
 import checkAuthKey from '../utils/chekAuthKey';
 import {UsersStore, GamesStore} from '../utils/store';
 import {sendUserInfo} from '../actions/userActions';
+import sendMessage from './sendMessage';
 import User from '../database/models/user';
 import restoreGame from './restoreGame';
 import {getExpToLevel} from "../utils/levelCalculation";
@@ -28,15 +29,20 @@ export default function (socket) {
             expToNextLevel: getExpToLevel(2)
         }
     }).then((user, created) => {
-        const userId = user.get('id');
+        const userId = user.id;
 
         socket.userId = userId;
 
         //Сохраняем пользователя в хранилище
         UsersStore.add(userId, user);
 
+        console.log('send');
+
         //Отправляем клиенту данные о пользователе
-        socket.emit('message', sendUserInfo(user));
+        sendMessage(socket, sendUserInfo(user));
+
+        console.log('after');
+
 
         //Если игрок не новый и у него есть незаконченная игра
         // if (!created && user.currentGameId) {

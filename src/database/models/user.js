@@ -11,7 +11,7 @@ const User = connect.define('user', {
         type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false
     },
-    firstaName: {
+    firstName: {
         type: Sequelize.STRING,
         defaultValue: null,
     },
