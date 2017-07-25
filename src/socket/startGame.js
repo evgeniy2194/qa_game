@@ -1,5 +1,5 @@
 import moment from 'moment';
-import Game from '../models/game';
+import Game from '../database/models/game';
 import {GamesStore, UsersStore, QuestionsStore} from '../utils/store';
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
@@ -31,10 +31,7 @@ export default function (players, gameConfig) {
         });
 
         //Сохраняем игру в базу
-        Game.create({
-            users: playerModels,
-            questions: questions,
-        }).then(game => {
+        Game.create({ startAt: new Date }).then(game => {
 
             let currentGame = {
                 game: game,
