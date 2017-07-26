@@ -12,7 +12,7 @@ module.exports = {
                 type: Sequelize.INTEGER.UNSIGNED,
                 allowNull: false
             },
-            firstaName: {
+            firstName: {
                 type: Sequelize.STRING,
                 defaultValue: null,
             },
