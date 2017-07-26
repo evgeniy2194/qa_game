@@ -12,7 +12,7 @@ const query = querystring.stringify({
     uid: params.userId
 });
 
-const socket = io.connect("wss://localhost:3000", {query: query});
+const socket = io.connect("wss://localhost:3000", {transports: ['websocket'], query: query});
 
 //TODO: Add connect/disconnect/error handlers
 socket.on('connect', () => {

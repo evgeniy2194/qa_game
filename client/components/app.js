@@ -27,7 +27,7 @@ class App extends Component {
         const props = this.props;
         let tpl;
 
-        if (!this.props.user._id) {
+        if (!this.props.user.id) {
             tpl = ( <Preload /> );
         } else {
             tpl = (

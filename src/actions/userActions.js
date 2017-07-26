@@ -2,6 +2,7 @@ export function sendUserInfo(user) {
     return {
         type: 'USER_INFO',
         data: {
+            id:         user.id,
             uid:        user.uid,
             firstName:  user.firstName,
             lastName:   user.lastName,

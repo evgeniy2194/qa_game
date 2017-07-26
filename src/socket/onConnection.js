@@ -12,7 +12,7 @@ export default function (socket) {
     let uid = query.uid;
 
     //Проверяем авторизирован ли пользователь
-    if (!checkAuthKey(uid, query.authKey)) {
+    if (!checkAuthKey(uid, query.authKey) && process.env.NODE_ENV === 'production') {
         socket.disconnect();
         return;
     }
@@ -28,7 +28,8 @@ export default function (socket) {
             lastName: query.lastName,
             expToNextLevel: getExpToLevel(2)
         }
-    }).then((user, created) => {
+    }).then((data, created) => {
+        const user = data[0];
         const userId = user.id;
 
         socket.userId = userId;
@@ -36,13 +37,8 @@ export default function (socket) {
         //Сохраняем пользователя в хранилище
         UsersStore.add(userId, user);
 
-        console.log('send');
-
         //Отправляем клиенту данные о пользователе
         sendMessage(socket, sendUserInfo(user));
-
-        console.log('after');
-
 
         //Если игрок не новый и у него есть незаконченная игра
         // if (!created && user.currentGameId) {

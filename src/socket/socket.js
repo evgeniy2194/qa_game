@@ -17,7 +17,6 @@ export function createSocket(server) {
 
         //Обработка всех входящих сообщений
         socket.on('message', data => {
-            console.log('DEBUG', data.action);
             switch (data.action) {
                 //Поиск игры
                 case 'FIND_GAME':
@@ -49,6 +48,7 @@ export function createSocket(server) {
         });
 
         socket.on('disconnect', () => {
+            console.log('disconnect');
             //Удаляем игрока с очереди и со списка игроков
             QueueStore.remove(socket.id);
             UsersStore.remove(socket.userId);
