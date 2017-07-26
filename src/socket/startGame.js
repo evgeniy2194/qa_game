@@ -5,6 +5,7 @@ import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
 import {startGame, sendQuestion, gameResult} from '../actions/gameActions';
 import {getExpToLevel, getLevelByExp} from "../utils/levelCalculation";
+import connect from '../database/connect';
 
 export default function (players, gameConfig) {
 
@@ -12,147 +13,147 @@ export default function (players, gameConfig) {
     const roundTime = gameConfig.roundTime;            //Время одного раунда
 
     let questionNumber = 0;     //Номер вопроса
+    //Ищем totalQuestion рандомных вопросы
+    let questions = QuestionsStore.getRandom(totalQuestion);
+    let playerModels = [];
+    let usersAnswers = new Map;
 
-    try {
-        //Ищем totalQuestion рандомных вопросы
-        let questions = QuestionsStore.getRandom(totalQuestion);
-        let playerModels = [];
-        let usersAnswers = new Map;
+    players.forEach((player) => {
+        playerModels.push(UsersStore.get(player.userId));
+        usersAnswers.set(player.userId, {
+            correctAnswers: 0,
+            points: 0,
+            answers: new Map
+        });
+    });
 
-        console.log(questions);
+    //Сохраняем игру в базу
+    Game.create({startAt: new Date}).then(game => {
 
-        players.forEach((player) => {
-            playerModels.push(UsersStore.get(player.userId));
-            usersAnswers.set(player.userId, {
-                correctAnswers: 0,
-                points: 0,
-                answers: new Map
-            });
+        let currentGame = {
+            game: game,
+            currentQuestion: '',
+            questions: questions,
+            players: players,
+            usersAnswers: usersAnswers
+        };
+
+        //Добавляем игру в список активных
+        GamesStore.add(game.id, currentGame);
+
+        //ToDo: replace by sequelize relationship
+        //Сохраняем инфу о игроках
+        playerModels.forEach(player => {
+            connect.query( "INSERT INTO game_players (gameId, userId) VALUE (" + game.id + ", " + player.id +")");
         });
 
-        //Сохраняем игру в базу
-        Game.create({ startAt: new Date }).then(game => {
+        //ToDo: replace by sequelize relationship
+        //Сохраняеем инфу о вопросах
+        questions.forEach(question => {
+            connect.query( "INSERT INTO game_players (gameId, questionId) VALUE (" + game.id + ", " + question.id +")");
+        });
 
-            let currentGame = {
-                game: game,
-                currentQuestion: '',
-                questions: questions,
-                players: players,
-                usersAnswers: usersAnswers
-            };
+        //Игра началась
+        sendMessage(players, startGame(game._id, game.users));
 
-            //Добавляем игру в список активных
-            GamesStore.add(game._id, currentGame);
+        //Отправляем новые вопросы по таймауту
+        let interval = setDeceleratingTimeout(() => {
+            players = currentGame.players;
 
-            playerModels.forEach(player => {
-                player.currentGameId = game._id;
-                player.save();
-            });
+            if (players.length == 0) {
+                GamesStore.remove(game._id);
+                clearInterval(interval);
+                return;
+            }
 
-            //Игра началась
-            sendMessage(players, startGame(game._id, game.users));
+            //Если вопросов нет - конец игры
+            if (questionNumber === questions.length) {
+                clearInterval(interval);
 
-            //Отправляем новые вопросы по таймауту
-            let interval = setDeceleratingTimeout(() => {
-                players = currentGame.players;
+                const usersAnswers = currentGame.usersAnswers;
 
-                if (players.length == 0) {
-                    GamesStore.remove(game._id);
-                    clearInterval(interval);
-                    return;
+                //Создаем обьект результатов игры
+                //Отправляем каждому игроку его очки
+                //Считаем очки игроков
+                let gamePoints = [];
+                for (let answer of usersAnswers.values()) {
+                    let points = answer.points;
+                    if (gamePoints.indexOf(points) === -1) {
+                        gamePoints.push(answer.points);
+                    }
                 }
 
-                //Если вопросов нет - конец игры
-                if (questionNumber === questions.length) {
-                    clearInterval(interval);
+                gamePoints.sort().reverse();
 
-                    const usersAnswers = currentGame.usersAnswers;
+                //Насчитываем награды игрокам
+                let gameRewards = {};
 
-                    //Создаем обьект результатов игры
-                    //Отправляем каждому игроку его очки
-                    //Считаем очки игроков
-                    let gamePoints = [];
-                    for (let answer of usersAnswers.values()) {
-                        let points = answer.points;
-                        if (gamePoints.indexOf(points) === -1) {
-                            gamePoints.push(answer.points);
-                        }
-                    }
+                usersAnswers.forEach((answer, userId) => {
+                    let user = UsersStore.get(userId);
+                    let correctAnswers = answer.correctAnswers;
+                    let points = answer.points;
 
-                    gamePoints.sort().reverse();
+                    gameRewards[points] = gameRewards[points] || [];
 
-                    //Насчитываем награды игрокам
-                    let gameRewards = {};
+                    const place = gamePoints.indexOf(points);
 
-                    usersAnswers.forEach((answer, userId) => {
-                        let user = UsersStore.get(userId);
-                        let correctAnswers = answer.correctAnswers;
-                        let points = answer.points;
+                    let coef = 6 - parseInt(place);
 
-                        gameRewards[points] = gameRewards[points] || [];
+                    const coins = 5 * coef;
+                    const exp = 10 * correctAnswers * coef;
+                    const gems = coef > 3 ? coef - 3 : 0;
 
-                        const place = gamePoints.indexOf(points);
-
-                        let coef = 6 - parseInt(place);
-
-                        const coins = 5 * coef;
-                        const exp = 10 * correctAnswers * coef;
-                        const gems = coef > 3 ? coef - 3 : 0;
-
-                        gameRewards[points].push({
-                            coins: coins,
-                            exp: exp,
-                            gems: gems,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                            userId: userId
-                        });
-
-                        user.coins += coins;
-                        user.totalExp += exp;
-                        user.gems += gems;
-
-                        const userLevel = getLevelByExp(user.totalExp);
-
-                        user.level = userLevel;
-                        user.expToNextLevel = getExpToLevel(userLevel + 1);
-
-                        user.save().then(() => {
-                            //Обновляем юзера
-                            players.forEach(player => {
-                                if (player.userId === userId) {
-                                    sendMessage(player, sendUserInfo(user));
-                                }
-                            });
-                        });
-
-                        //Удаляем игру из списка игр
-                        GamesStore.remove(game._id);
+                    gameRewards[points].push({
+                        coins: coins,
+                        exp: exp,
+                        gems: gems,
+                        firstName: user.firstName,
+                        lastName: user.lastName,
+                        userId: userId
                     });
 
-                    //Отправляем всем ирокам результаты игры
-                    sendMessage(players, gameResult(gameRewards));
+                    user.coins += coins;
+                    user.totalExp += exp;
+                    user.gems += gems;
 
-                } else {
-                    let question = questions[questionNumber];
-                    let endTime = moment.utc().add('seconds', roundTime / 1000);
+                    const userLevel = getLevelByExp(user.totalExp);
 
-                    questionNumber++;
+                    user.level = userLevel;
+                    user.expToNextLevel = getExpToLevel(userLevel + 1);
 
-                    //Записываем вопрос в текущую игру
-                    currentGame.currentQuestion = question;
-                    currentGame.currentQuestion.endTime = endTime;
-                    currentGame.currentQuestion.totalQuestion = questions.length;
-                    currentGame.currentQuestion.questionNumber = questionNumber;
+                    user.save().then(() => {
+                        //Обновляем юзера
+                        players.forEach(player => {
+                            if (player.userId === userId) {
+                                sendMessage(player, sendUserInfo(user));
+                            }
+                        });
+                    });
 
-                    sendMessage(players, sendQuestion(currentGame.currentQuestion));
-                }
+                    //Удаляем игру из списка игр
+                    GamesStore.remove(game._id);
+                });
 
-            }, roundTime, questions.length + 1);
-        });
-    } catch (err) {
-        console.trace(err);
-    }
+                //Отправляем всем ирокам результаты игры
+                sendMessage(players, gameResult(gameRewards));
+
+            } else {
+                let question = questions[questionNumber];
+                let endTime = moment.utc().add('seconds', roundTime / 1000);
+
+                questionNumber++;
+
+                //Записываем вопрос в текущую игру
+                currentGame.currentQuestion = question;
+                currentGame.currentQuestion.endTime = endTime;
+                currentGame.currentQuestion.totalQuestion = questions.length;
+                currentGame.currentQuestion.questionNumber = questionNumber;
+
+                sendMessage(players, sendQuestion(currentGame.currentQuestion));
+            }
+
+        }, roundTime, questions.length + 1);
+    });
 }
 
 function setDeceleratingTimeout(callback, factor, times) {
