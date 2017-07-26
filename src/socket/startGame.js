@@ -14,12 +14,12 @@ export default function (players, gameConfig) {
     let questionNumber = 0;     //Номер вопроса
 
     try {
-        //Ищем в базе totalQuestion рандомных вопросы
-        //Math.floor( Math.random() * count )
-
+        //Ищем totalQuestion рандомных вопросы
         let questions = QuestionsStore.getRandom(totalQuestion);
         let playerModels = [];
         let usersAnswers = new Map;
+
+        console.log(questions);
 
         players.forEach((player) => {
             playerModels.push(UsersStore.get(player.userId));
