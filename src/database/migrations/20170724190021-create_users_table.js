@@ -2,7 +2,7 @@ const tableName = 'users';
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
-        queryInterface.createTable(tableName, {
+        return queryInterface.createTable(tableName, {
             id: {
                 type: Sequelize.INTEGER.UNSIGNED,
                 primaryKey: true,
@@ -44,9 +44,9 @@ module.exports = {
             }
         }, {
             charset: 'utf8',
+        }).then(function(){
+            return queryInterface.addIndex(tableName, ['uid'], {indicesType: 'UNIQUE'});
         });
-
-        queryInterface.addIndex(tableName, ['uid'], {indicesType: 'UNIQUE'});
     },
 
     down: (queryInterface, Sequelize) => {
