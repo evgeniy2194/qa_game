@@ -50,7 +50,7 @@ export default function (players, gameConfig) {
         //ToDo: replace by sequelize relationship
         //Сохраняеем инфу о вопросах
         questions.forEach(question => {
-            connect.query( "INSERT INTO game_players (gameId, questionId) VALUE (" + game.id + ", " + question.id +")");
+            connect.query( "INSERT INTO game_questions (gameId, questionId) VALUE (" + game.id + ", " + question.id +")");
         });
 
         //Игра началась
