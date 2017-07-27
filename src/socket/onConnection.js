@@ -27,7 +27,7 @@ export default function (socket) {
             uid: uid,
             firstName: query.firstName,
             lastName: query.lastName,
-            expToNextLevel: getExpToLevel(2)
+            expToLevel: getExpToLevel(2)
         }
     }).then((data, created) => {
         const user = data[0];
@@ -42,7 +42,7 @@ export default function (socket) {
         sendMessage(socket, sendUserInfo(user));
 
         //Если игрок не новый и у него есть незаконченная игра
-        if  (!created) {
+        if (!created) {
             const sql = "SELECT g.id FROM games g INNER JOIN game_players p ON p.gameId = g.id WHERE g.endAt IS NULL";
             connect.query(sql).then((game) => {
                 if (game) {

@@ -18,6 +18,14 @@ export default function (players, gameConfig) {
     let playerModels = [];
     let usersAnswers = new Map;
 
+    questions.forEach(question => {
+        question.answers.forEach(answer => {
+            if (answer.isCorrect) {
+                question.correctAnswerId = answer.id;
+            }
+        })
+    });
+
     players.forEach((player) => {
         playerModels.push(UsersStore.get(player.userId));
         usersAnswers.set(player.userId, {
@@ -44,13 +52,13 @@ export default function (players, gameConfig) {
         //ToDo: replace by sequelize relationship
         //Сохраняем инфу о игроках
         playerModels.forEach(player => {
-            connect.query( "INSERT INTO game_players (gameId, userId) VALUE (" + game.id + ", " + player.id +")");
+            connect.query("INSERT INTO game_players (gameId, userId) VALUE (" + game.id + ", " + player.id + ")");
         });
 
         //ToDo: replace by sequelize relationship
         //Сохраняеем инфу о вопросах
         questions.forEach(question => {
-            connect.query( "INSERT INTO game_questions (gameId, questionId) VALUE (" + game.id + ", " + question.id +")");
+            connect.query("INSERT INTO game_questions (gameId, questionId) VALUE (" + game.id + ", " + question.id + ")");
         });
 
         //Игра началась
@@ -60,7 +68,7 @@ export default function (players, gameConfig) {
         let interval = setDeceleratingTimeout(() => {
             players = currentGame.players;
 
-            if (players.length == 0) {
+            if (players.length === 0) {
                 GamesStore.remove(game.id);
                 clearInterval(interval);
                 return;
@@ -113,13 +121,13 @@ export default function (players, gameConfig) {
                     });
 
                     user.coins += coins;
-                    user.totalExp += exp;
+                    user.expTotal += exp;
                     user.gems += gems;
 
-                    const userLevel = getLevelByExp(user.totalExp);
+                    const userLevel = getLevelByExp(user.expTotal);
 
                     user.level = userLevel;
-                    user.expToNextLevel = getExpToLevel(userLevel + 1);
+                    user.expToLevel = getExpToLevel(userLevel + 1);
 
                     user.save().then(() => {
                         //Обновляем юзера

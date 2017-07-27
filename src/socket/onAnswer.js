@@ -17,7 +17,7 @@ export default (socket, data) => {
     let userAnswers = game.usersAnswers.get(userId);
 
     const currentQuestion = game.currentQuestion;
-    const currentQuestionId = currentQuestion._id;
+    const currentQuestionId = currentQuestion.id;
 
     //Если пользователь не отвечал на этот вопрос
     if (!userAnswers.answers.has(currentQuestionId)) {
