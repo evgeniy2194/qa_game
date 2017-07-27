@@ -54,14 +54,14 @@ export default function (players, gameConfig) {
         });
 
         //Игра началась
-        sendMessage(players, startGame(game._id, game.users));
+        sendMessage(players, startGame(game.id, game.users));
 
         //Отправляем новые вопросы по таймауту
         let interval = setDeceleratingTimeout(() => {
             players = currentGame.players;
 
             if (players.length == 0) {
-                GamesStore.remove(game._id);
+                GamesStore.remove(game.id);
                 clearInterval(interval);
                 return;
             }
@@ -131,7 +131,11 @@ export default function (players, gameConfig) {
                     });
 
                     //Удаляем игру из списка игр
-                    GamesStore.remove(game._id);
+                    GamesStore.remove(game.id);
+
+                    //Игра закончилась
+                    game.endAt = new Date;
+                    game.save();
                 });
 
                 //Отправляем всем ирокам результаты игры

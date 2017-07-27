@@ -7,6 +7,9 @@ const connect = new Sequelize('game', 'game', 'aq1sw2de3', {
         max: 5,
         min: 0,
         idle: 10000
+    },
+    define: {
+        timestamps: false
     }
 });
 

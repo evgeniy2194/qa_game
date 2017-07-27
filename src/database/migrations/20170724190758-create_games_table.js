@@ -11,11 +11,12 @@ module.exports = {
                 primaryKey: true,
                 autoIncrement: true
             },
-            createdAt: {
+            startAt: {
                 type: Sequelize.DATE
             },
-            updatedAt: {
-                type: Sequelize.DATE
+            endAt: {
+                type: Sequelize.DATE,
+                defaultValue: null
             }
         }, {
             charset: 'UTF8',

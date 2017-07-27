@@ -5,6 +5,7 @@ import sendMessage from './sendMessage';
 import User from '../database/models/user';
 import restoreGame from './restoreGame';
 import {getExpToLevel} from "../utils/levelCalculation";
+import connect from '../database/connect';
 
 export default function (socket) {
 
@@ -41,8 +42,13 @@ export default function (socket) {
         sendMessage(socket, sendUserInfo(user));
 
         //Если игрок не новый и у него есть незаконченная игра
-        // if (!created && user.currentGameId) {
-        //     restoreGame(socket, GamesStore.get(user.currentGameId));
-        // }
+        if  (!created) {
+            const sql = "SELECT g.id FROM games g INNER JOIN game_players p ON p.gameId = g.id WHERE g.endAt IS NULL";
+            connect.query(sql).then((game) => {
+                if (game) {
+                    restoreGame(socket, GamesStore.get(game.id));
+                }
+            })
+        }
     });
 }
