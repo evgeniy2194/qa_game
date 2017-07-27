@@ -14,18 +14,18 @@ export default (socket, data) => {
         case '50/50':
 
             let alreadyUsed = false;
+            let wrongAnswers = [];
+            let count = 0;
 
-            game.game.users = game.game.users.map(user => {
-                if (user._id == userId) {
+            //ToDo: check use hint from database
+            game.players = game.players.map(user => {
+                if (user.id === userId) {
                     alreadyUsed = user.is50HintUsed;
 
                     user.is50HintUsed = true;
                 }
                 return user;
             });
-            game.game.save();
-            let wrongAnswers = [];
-            let count = 0;
 
             if (!alreadyUsed) {
                 answers.forEach(answer => {
@@ -40,7 +40,5 @@ export default (socket, data) => {
             break;
         default:
             break;
-
     }
-
 }
