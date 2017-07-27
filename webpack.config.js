@@ -1,7 +1,9 @@
-import path from 'path';
-import webpack from 'webpack';
+'use strict';
 
-const config = {
+let path = require('path');
+let webpack = require('webpack');
+
+module.exports = {
     devtool: 'cheap-module-eval-source-map',
     entry: [
         'webpack-hot-middleware/client',
@@ -10,26 +12,21 @@ const config = {
         './client/index'
     ],
     output: {
-        path: path.join(__dirname, 'dist'),
+        path: path.join(__dirname, '/static'),
         filename: 'bundle.js',
         publicPath: '/static/'
     },
     plugins: [
         new webpack.optimize.OccurenceOrderPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.NoErrorsPlugin(),
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-            }
-        })
+        new webpack.NoErrorsPlugin()
     ],
     module: {
-        loaders: [ //добавили babel-loader
+        loaders: [
             {
-                loaders: ['react-hot', 'babel-loader'],
+                loaders: ['babel-loader'],
                 include: [
-                    path.resolve(__dirname, "../client"),
+                    path.resolve(__dirname, "./client"),
                 ],
                 test: /\.js$/,
                 plugins: ['transform-runtime'],
@@ -37,5 +34,3 @@ const config = {
         ]
     }
 };
-
-export default config;

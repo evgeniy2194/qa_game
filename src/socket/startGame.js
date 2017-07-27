@@ -12,23 +12,17 @@ export default function (players, gameConfig) {
     const totalQuestion = gameConfig.totalQuestion;    //Колл-во вопросов в игре
     const roundTime = gameConfig.roundTime;            //Время одного раунда
 
+    //Ищем totalQuestion рандомных вопросы
+    let questions = QuestionsStore.getRandom(totalQuestion);
     let questionNumber = 0;     //Номер вопроса
+    let playerModels = [];
+    let usersAnswers = new Map;
+    let hints = HintsStore.getAll();
+    let hintsCost = {};
 
-    try {
-        //Ищем totalQuestion рандомных вопросы
-        let questions = QuestionsStore.getRandom(totalQuestion);
-        let playerModels = [];
-        let usersAnswers = new Map;
-
-        let hints = HintsStore.getAll();
-
-        let hintsCost = {};
-
-        for (let hintName in hints){
-
-            hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, 0);
-
-        }
+    for (let hintName in hints) {
+        hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, 0);
+    }
 
     questions.forEach(question => {
         question.answers.forEach(answer => {
@@ -81,11 +75,11 @@ export default function (players, gameConfig) {
             connect.query("INSERT INTO game_questions (gameId, questionId) VALUE (" + game.id + ", " + question.id + ")");
         });
 
-            //Изначальная стоимость подсказок
-            sendMessage(players, sendHintsCost(hintsCost));
+        //Изначальная стоимость подсказок
+        sendMessage(players, sendHintsCost(hintsCost));
 
-            //Игра началась
-            sendMessage(players, startGame(game.id, game.users));
+        //Игра началась
+        sendMessage(players, startGame(game.id, game.users));
 
         //Отправляем новые вопросы по таймауту
         let interval = setDeceleratingTimeout(() => {
@@ -184,15 +178,16 @@ export default function (players, gameConfig) {
                 currentGame.currentQuestion.totalQuestion = questions.length;
                 currentGame.currentQuestion.questionNumber = questionNumber;
 
-                    game.users = game.users.map(user =>{
+                currentGame.players = currentGame.players.map(user => {
 
-                        Object.keys(HintsStore.getAll()).map(hintName =>{
-                            user.roundHintsUsed[hintName] = false;
-                        });
-                        return user;
+                    Object.keys(HintsStore.getAll()).map(hintName => {
+                        user.roundHintsUsed = user.roundHintsUsed || {};
+                        user.roundHintsUsed[hintName] = false;
                     });
-                    sendMessage(players, sendQuestion(currentGame.currentQuestion));
-                }
+                    return user;
+                });
+                sendMessage(players, sendQuestion(currentGame.currentQuestion));
+            }
 
         }, roundTime, questions.length + 1);
     });
@@ -211,4 +206,4 @@ function setDeceleratingTimeout(callback, factor, times) {
     }(times, 0);
 
     setTimeout(internalCallback, 0);
-}
+};
