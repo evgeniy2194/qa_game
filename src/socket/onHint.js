@@ -9,6 +9,7 @@ import {CalculateHints} from "../utils/HintsCalculator";
 export default (socket, data) => {
     const gameId = data.gameId;
     const userId = socket.userId;
+    const user = UsersStore.get(userId);
     const game = GamesStore.get(gameId);
     const question = game.currentQuestion;
     const answers = shuffle(question.answers);
@@ -20,8 +21,7 @@ export default (socket, data) => {
     let hintName = data.hint;
 
     game.players = game.players.map(user => {
-        if (user._id === userId) {
-
+        if (user.id === userId) {
             if (!user.roundHintsUsed[hintName]) {
                 user.roundHintsUsed[hintName] = true;
                 hintsCost = CalculateHints(user);

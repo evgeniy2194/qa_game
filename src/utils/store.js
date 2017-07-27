@@ -83,10 +83,12 @@ class HintsStoreClass extends StoreClass{
 
         return super.getAll();
     }
+
     get(key){
         return this.defaultCosts[key];
         return super.get(key);
     }
+
     getCostByNameAndCount(key, count){
         return this.defaultCosts[key]['costs'][count];
     }
