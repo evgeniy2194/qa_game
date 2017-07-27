@@ -57,9 +57,46 @@ class QuestionsStoreClass extends StoreClass {
     }
 }
 
+class HintsStoreClass extends StoreClass{
+    defaultCosts = {
+        'hint50': {
+            'costs': [
+                {'coins': 100, 'gems': 0},
+                {'coins': 110, 'gems': 2},
+                {'coins': 120, 'gems': 4},
+                {'coins': 130, 'gems': 8}
+            ]
+        },
+        'veryExpensive': {
+            'costs': [
+                {'coins': 100, 'gems': 100},
+                {'coins': 110, 'gems': 200},
+                {'coins': 120, 'gems': 400},
+                {'coins': 130, 'gems': 800}
+            ]
+        }
+    };
+
+    getAll(){
+
+        return this.defaultCosts;
+
+        return super.getAll();
+    }
+    get(key){
+        return this.defaultCosts[key];
+        return super.get(key);
+    }
+    getCostByNameAndCount(key, count){
+        return this.defaultCosts[key]['costs'][count];
+    }
+
+}
+
 let UsersStore = new StoreClass();
 let GamesStore = new StoreClass();
 let QueueStore = new StoreClass();
 let QuestionsStore = new QuestionsStoreClass();
+let HintsStore = new HintsStoreClass();
 
-export {UsersStore, GamesStore, QueueStore, QuestionsStore};
+export {UsersStore, GamesStore, QueueStore, QuestionsStore, HintsStore};

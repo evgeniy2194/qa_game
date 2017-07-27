@@ -1,9 +1,12 @@
 import url from 'url';
 
 export function getAppParams() {
-    let data;
 
-    if (process.env.NODE_ENV === 'development') {
+    let data;
+    console.log(process);
+
+    if ( true ) {
+
         data = {
             apiId: 5738699,
             apiSettings: 3,
@@ -17,6 +20,7 @@ export function getAppParams() {
             }
         };
     } else {
+
         const query = url.parse(window.location.href, true).query;
         const response = JSON.parse(query.api_result).response[0];
 

@@ -1,9 +1,9 @@
 import moment from 'moment';
 import Game from '../database/models/game';
-import {GamesStore, UsersStore, QuestionsStore} from '../utils/store';
+import {GamesStore, UsersStore, QuestionsStore, HintsStore} from '../utils/store';
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
-import {startGame, sendQuestion, gameResult} from '../actions/gameActions';
+import {startGame, sendQuestion, gameResult, sendHintsCost} from '../actions/gameActions';
 import {getExpToLevel, getLevelByExp} from "../utils/levelCalculation";
 import connect from '../database/connect';
 
@@ -13,10 +13,22 @@ export default function (players, gameConfig) {
     const roundTime = gameConfig.roundTime;            //Время одного раунда
 
     let questionNumber = 0;     //Номер вопроса
-    //Ищем totalQuestion рандомных вопросы
-    let questions = QuestionsStore.getRandom(totalQuestion);
-    let playerModels = [];
-    let usersAnswers = new Map;
+
+    try {
+        //Ищем totalQuestion рандомных вопросы
+        let questions = QuestionsStore.getRandom(totalQuestion);
+        let playerModels = [];
+        let usersAnswers = new Map;
+
+        let hints = HintsStore.getAll();
+
+        let hintsCost = {};
+
+        for (let hintName in hints){
+
+            hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, 0);
+
+        }
 
     questions.forEach(question => {
         question.answers.forEach(answer => {
@@ -37,6 +49,14 @@ export default function (players, gameConfig) {
 
     //Сохраняем игру в базу
     Game.create({startAt: new Date}).then(game => {
+
+        // game.users = game.users.map(user =>{
+        //
+        //     Object.keys(HintsStore.getAll()).map(hintName =>{
+        //         user.hintsUsedCounter[hintName] = 0;
+        //     });
+        //     return user;
+        // });
 
         let currentGame = {
             game: game,
@@ -61,8 +81,11 @@ export default function (players, gameConfig) {
             connect.query("INSERT INTO game_questions (gameId, questionId) VALUE (" + game.id + ", " + question.id + ")");
         });
 
-        //Игра началась
-        sendMessage(players, startGame(game.id, game.users));
+            //Изначальная стоимость подсказок
+            sendMessage(players, sendHintsCost(hintsCost));
+
+            //Игра началась
+            sendMessage(players, startGame(game.id, game.users));
 
         //Отправляем новые вопросы по таймауту
         let interval = setDeceleratingTimeout(() => {
@@ -161,8 +184,15 @@ export default function (players, gameConfig) {
                 currentGame.currentQuestion.totalQuestion = questions.length;
                 currentGame.currentQuestion.questionNumber = questionNumber;
 
-                sendMessage(players, sendQuestion(currentGame.currentQuestion));
-            }
+                    game.users = game.users.map(user =>{
+
+                        Object.keys(HintsStore.getAll()).map(hintName =>{
+                            user.roundHintsUsed[hintName] = false;
+                        });
+                        return user;
+                    });
+                    sendMessage(players, sendQuestion(currentGame.currentQuestion));
+                }
 
         }, roundTime, questions.length + 1);
     });
