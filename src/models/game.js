@@ -8,9 +8,13 @@ const questionSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'user'
         },
-        is50HintUsed: {
-            type: Boolean,
-            default: false
+        hintsUsedCounter: {
+            type : mongoose.Schema.Types.Mixed,
+            default : {}
+        },
+        roundHintsUsed: {
+            type : mongoose.Schema.Types.Mixed,
+            default : {}
         },
     }],
     questions: [{                    //Вопросы

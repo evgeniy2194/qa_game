@@ -19,4 +19,15 @@ export default (socket) => {
         }
     })
 
+    game.game.users = game.game.users.filter(player =>{
+
+        if(player._id != socket.userId){
+            return player;
+        }
+    })
+
+    user.currentGameId = null;
+
+    user.save();
+    game.game.save();
 }

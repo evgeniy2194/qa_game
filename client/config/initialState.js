@@ -42,7 +42,8 @@ const initialState = {
         answers: [],                //Ответы
         wrongAnswers: [],           //Неверные ответы (При использовании подсказки)
         is50HintUsed: false,
-        endTime: null
+        endTime: null,
+        hintsCosts: {}
     }
 };
 

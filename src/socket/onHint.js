@@ -1,7 +1,10 @@
 import sendMessage from './sendMessage';
-import {GamesStore} from '../utils/store';
-import {sendWrongAnswers} from '../actions/gameActions';
+import {GamesStore, UsersStore} from '../utils/store';
+import {sendWrongAnswers, sendHintsCost} from '../actions/gameActions';
+import {sendUserInfo} from "../actions/userActions";
+import {HINT_50, VERY_EXPENSIVE} from '../constants/hints';
 import shuffle from 'shuffle-array';
+import {CalculateHints} from "../utils/HintsCalculator";
 
 export default (socket, data) => {
     const gameId = data.gameId;
@@ -10,19 +13,50 @@ export default (socket, data) => {
     const question = game.currentQuestion;
     const answers = shuffle(question.answers);
 
-    switch (data.hint) {
-        case '50/50':
 
-            let alreadyUsed = false;
+    let noHintsLeft = false;
 
-            game.game.users = game.game.users.map(user => {
-                if (user._id == userId) {
-                    alreadyUsed = user.is50HintUsed;
+    let alreadyUsed = false;
+    let hintsCost = {};
+    let newHintsCost = {};
+    let hintName = data.hint;
 
-                    user.is50HintUsed = true;
+    game.game.users = game.game.users.map(user => {
+        if (user._id == userId) {
+
+            if (!user.roundHintsUsed[hintName]) {
+                user.roundHintsUsed[hintName] = true;
+                hintsCost =  CalculateHints(user);
+
+                if (!hintsCost[hintName] ){
+                    noHintsLeft = true; // means that there are no hints left for the user
+                }else{
+                    // reduce coins/gems
+                    let userFromStore = UsersStore.get(user._id);
+
+                    userFromStore.gems -= hintsCost[hintName].gems;
+                    userFromStore.coins -= hintsCost[hintName].coins;
+
+                    userFromStore.save();
+                    sendMessage(socket, sendUserInfo(userFromStore));
+                    user.hintsUsedCounter[hintName]++;
+                    newHintsCost =  CalculateHints(user);
+
                 }
-                return user;
-            });
+            }else{
+
+                alreadyUsed =true;
+            }
+
+        }
+        return user;
+    });
+
+    switch (data.hint) {
+        case HINT_50:
+
+
+
             game.game.save();
             let wrongAnswers = [];
             let count = 0;
@@ -36,11 +70,24 @@ export default (socket, data) => {
                 });
             }
 
-            sendMessage(socket, sendWrongAnswers({wrongAnswers: wrongAnswers}));
+            if( newHintsCost[HINT_50] ) {
+                sendMessage(socket, sendHintsCost(newHintsCost));
+            }else{
+                sendMessage( socket, sendHintsCost( {'NoMoreHintsLeft': true} ) );
+            }
+            if(!noHintsLeft) {
+
+                sendMessage(socket, sendWrongAnswers({wrongAnswers: wrongAnswers}));
+            }
+
             break;
+        case VERY_EXPENSIVE:
         default:
             break;
 
     }
+
+
+
 
 }

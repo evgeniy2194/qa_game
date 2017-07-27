@@ -13,7 +13,8 @@ export default function (state = {}, action) {
         case "SEND_QUESTION":
             store = {
                 chosenAnswer: false,
-                isCorrectAnswer: null
+                isCorrectAnswer: null,
+                is50HintUsed: false
             };
 
             return {...state, ...action.data, ...store};
@@ -22,6 +23,7 @@ export default function (state = {}, action) {
         case "ANSWER_RESULT":
             return {...state, ...action.data};
         case "WRONG_ANSWERS":
+
             store = {answers : []};
             store.answers = state.answers.map(answer => {
 
@@ -34,6 +36,11 @@ export default function (state = {}, action) {
             });
             store.is50HintUsed = true;
             return {...state, ...store};
+
+        case "HINTS_COST":
+            store = { hintsCosts: action.data };
+            return {...state, ...store };
+
         case "GAME_RESULT":
             //Обнуляем игру
             store = {
@@ -50,7 +57,8 @@ export default function (state = {}, action) {
                 points: 0,                  //Очков в текущей игре
                 showGameResult: true,
                 gameResut: action.data,
-                is50HintUsed: false
+                is50HintUsed: false,
+                hintsCosts: {}
             };
 
             return {...state, ...store};

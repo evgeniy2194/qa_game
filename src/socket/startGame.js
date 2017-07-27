@@ -1,9 +1,9 @@
 import moment from 'moment';
 import Game from '../models/game';
-import {GamesStore, UsersStore, QuestionsStore} from '../utils/store';
+import {GamesStore, UsersStore, QuestionsStore, HintsStore} from '../utils/store';
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
-import {startGame, sendQuestion, gameResult} from '../actions/gameActions';
+import {startGame, sendQuestion, gameResult, sendHintsCost} from '../actions/gameActions';
 import {getExpToLevel, getLevelByExp} from "../utils/levelCalculation";
 
 export default function (players, gameConfig) {
@@ -20,6 +20,15 @@ export default function (players, gameConfig) {
         let questions = QuestionsStore.getRandom(totalQuestion);
         let playerModels = [];
         let usersAnswers = new Map;
+        let hints = HintsStore.getAll();
+
+        let hintsCost = {};
+
+        for (let hintName in hints){
+
+            hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, 0);
+
+        }
 
         players.forEach((player) => {
             playerModels.push(UsersStore.get(player.userId));
@@ -35,6 +44,14 @@ export default function (players, gameConfig) {
             users: playerModels,
             questions: questions,
         }).then(game => {
+            //console.log(game);
+            game.users = game.users.map(user =>{
+
+                 Object.keys(HintsStore.getAll()).map(hintName =>{
+                     user.hintsUsedCounter[hintName] = 0;
+                 });
+                 return user;
+            });
 
             let currentGame = {
                 game: game,
@@ -52,8 +69,13 @@ export default function (players, gameConfig) {
                 player.save();
             });
 
+            //Изначальная стоимость подсказок
+            sendMessage(players, sendHintsCost(hintsCost));
+
             //Игра началась
             sendMessage(players, startGame(game._id, game.users));
+
+
 
             //Отправляем новые вопросы по таймауту
             let interval = setDeceleratingTimeout(() => {
@@ -148,6 +170,13 @@ export default function (players, gameConfig) {
                     currentGame.currentQuestion.totalQuestion = questions.length;
                     currentGame.currentQuestion.questionNumber = questionNumber;
 
+                    game.users = game.users.map(user =>{
+
+                        Object.keys(HintsStore.getAll()).map(hintName =>{
+                            user.roundHintsUsed[hintName] = false;
+                        });
+                        return user;
+                    });
                     sendMessage(players, sendQuestion(currentGame.currentQuestion));
                 }
 

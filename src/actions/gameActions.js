@@ -22,6 +22,13 @@ export function sendQuestion(data) {
     };
 }
 
+export function sendHintsCost(data) {
+    return {
+        type: "HINTS_COST",
+        data: data
+    }
+}
+
 export function answerResult(answerId, isCorrectAnswer) {
     return {
         type: "ANSWER_RESULT",
