@@ -1,7 +1,6 @@
 const initialState = {
     //Настройки приложения
     app: {
-        load: false,
         apiId: '',
         apiSettings: '',
         userId: '',
@@ -14,12 +13,13 @@ const initialState = {
     },
     //Игрок
     user: {
-        uid: '',
+        id: 0,
+        uid: 0,
         authKey: '',
         firstName: '',
         lastName: '',
-        totalExp: 0,
-        expToNextLevel: 0,
+        expTotal: 0,
+        expToLevel: 0,
         level: 1,
         coins: 0,
         gems: 0,

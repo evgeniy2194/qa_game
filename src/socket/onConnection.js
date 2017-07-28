@@ -1,9 +1,11 @@
 import checkAuthKey from '../utils/chekAuthKey';
 import {UsersStore, GamesStore} from '../utils/store';
 import {sendUserInfo} from '../actions/userActions';
-import User from '../models/user';
+import sendMessage from './sendMessage';
+import User from '../database/models/user';
 import restoreGame from './restoreGame';
 import {getExpToLevel} from "../utils/levelCalculation";
+import connect from '../database/connect';
 
 export default function (socket) {
 
@@ -11,52 +13,42 @@ export default function (socket) {
     let uid = query.uid;
 
     //Проверяем авторизирован ли пользователь
-    if (!checkAuthKey(uid, query.authKey)) {
+    if (!checkAuthKey(uid, query.authKey) && process.env.NODE_ENV === 'production') {
         socket.disconnect();
         return;
     }
 
-    try {
-        //Ищем пользователя, если нет - создаем
-        User.findOne({uid: uid}).then(user => {
+    //Ищем или создаем пользователя
+    User.findOrCreate({
+        where: {
+            uid: uid
+        },
+        defaults: {
+            uid: uid,
+            firstName: query.firstName,
+            lastName: query.lastName,
+            expToLevel: getExpToLevel(2)
+        }
+    }).then((data, created) => {
+        const user = data[0];
+        const userId = user.id;
 
-            //Если не нашли юзера - создаем
-            if (user) {
-                const userId = String(user._id);
-                user._id = String(user._id);
+        socket.userId = userId;
 
-                //Сохраняем пользователя в хранилище
-                UsersStore.add(userId, user);
-                socket.userId = userId;
+        //Сохраняем пользователя в хранилище
+        UsersStore.add(userId, user);
 
-                //Отправляем клиенту данные о пользователе
-                socket.emit('message', sendUserInfo(user));
+        //Отправляем клиенту данные о пользователе
+        sendMessage(socket, sendUserInfo(user));
 
-                //Если у игрока есть незаконченная игра
-                if (user.currentGameId) {
-                    restoreGame(socket, GamesStore.get(user.currentGameId));
+        //Если игрок не новый и у него есть незаконченная игра
+        if (!created) {
+            const sql = "SELECT g.id FROM games g INNER JOIN game_players p ON p.gameId = g.id WHERE g.endAt IS NULL";
+            connect.query(sql).then((game) => {
+                if (game) {
+                    restoreGame(socket, GamesStore.get(game.id));
                 }
-            } else {
-                User.create({
-                    uid: uid,
-                    firstName: query.firstName,
-                    lastName: query.lastName,
-                    expToNextLevel: getExpToLevel(2)
-                }).then(user => {
-                    const userId = String(user._id);
-
-                    //Сохраняем пользователя в хранилище
-                    UsersStore.add(userId, user);
-                    socket.userId = userId;
-
-                    //Отправляем клиенту данные о пользователе
-                    socket.emit('message', sendUserInfo(user));
-                });
-            }
-        }).catch(error => {
-            throw error;
-        })
-    } catch (err) {
-        console.trace(err);
-    }
+            })
+        }
+    });
 }

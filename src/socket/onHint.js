@@ -9,55 +9,48 @@ import {CalculateHints} from "../utils/HintsCalculator";
 export default (socket, data) => {
     const gameId = data.gameId;
     const userId = socket.userId;
+    const user = UsersStore.get(userId);
     const game = GamesStore.get(gameId);
     const question = game.currentQuestion;
     const answers = shuffle(question.answers);
 
-
     let noHintsLeft = false;
-
     let alreadyUsed = false;
     let hintsCost = {};
     let newHintsCost = {};
     let hintName = data.hint;
 
-    game.game.users = game.game.users.map(user => {
-        if (user._id == userId) {
-
+    game.players = game.players.map(user => {
+        if (user.id === userId) {
             if (!user.roundHintsUsed[hintName]) {
                 user.roundHintsUsed[hintName] = true;
-                hintsCost =  CalculateHints(user);
+                hintsCost = CalculateHints(user);
 
-                if (!hintsCost[hintName] ){
+                if (!hintsCost[hintName]) {
                     noHintsLeft = true; // means that there are no hints left for the user
-                }else{
+                } else {
                     // reduce coins/gems
-                    let userFromStore = UsersStore.get(user._id);
+                    let userFromStore = UsersStore.get(user.id);
 
                     userFromStore.gems -= hintsCost[hintName].gems;
                     userFromStore.coins -= hintsCost[hintName].coins;
-
                     userFromStore.save();
                     sendMessage(socket, sendUserInfo(userFromStore));
+
                     user.hintsUsedCounter[hintName]++;
-                    newHintsCost =  CalculateHints(user);
-
+                    newHintsCost = CalculateHints(user);
                 }
-            }else{
-
-                alreadyUsed =true;
+            } else {
+                alreadyUsed = true;
             }
-
         }
+
         return user;
     });
 
     switch (data.hint) {
         case HINT_50:
 
-
-
-            game.game.save();
             let wrongAnswers = [];
             let count = 0;
 
@@ -70,13 +63,13 @@ export default (socket, data) => {
                 });
             }
 
-            if( newHintsCost[HINT_50] ) {
+            if (newHintsCost[HINT_50]) {
                 sendMessage(socket, sendHintsCost(newHintsCost));
-            }else{
-                sendMessage( socket, sendHintsCost( {'NoMoreHintsLeft': true} ) );
+            } else {
+                sendMessage(socket, sendHintsCost({'NoMoreHintsLeft': true}));
             }
-            if(!noHintsLeft) {
 
+            if (!noHintsLeft) {
                 sendMessage(socket, sendWrongAnswers({wrongAnswers: wrongAnswers}));
             }
 
@@ -84,10 +77,5 @@ export default (socket, data) => {
         case VERY_EXPENSIVE:
         default:
             break;
-
     }
-
-
-
-
 }

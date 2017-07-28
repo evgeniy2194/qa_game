@@ -1,8 +1,8 @@
 const tableName = 'users';
 
-export default {
+module.exports = {
     up: (queryInterface, Sequelize) => {
-        queryInterface.createTable(tableName, {
+        return queryInterface.createTable(tableName, {
             id: {
                 type: Sequelize.INTEGER.UNSIGNED,
                 primaryKey: true,
@@ -12,7 +12,7 @@ export default {
                 type: Sequelize.INTEGER.UNSIGNED,
                 allowNull: false
             },
-            firstaName: {
+            firstName: {
                 type: Sequelize.STRING,
                 defaultValue: null,
             },
@@ -43,13 +43,13 @@ export default {
                 type: Sequelize.DATE
             }
         }, {
-            charset: 'UTF-8',
+            charset: 'utf8',
+        }).then(function(){
+            return queryInterface.addIndex(tableName, ['uid'], {indicesType: 'UNIQUE'});
         });
-
-        queryInterface.addIndex(tableName, ['uid'], {indicesType: 'UNIQUE'});
     },
 
     down: (queryInterface, Sequelize) => {
         return queryInterface.dropTable(tableName);
     }
-}
+};

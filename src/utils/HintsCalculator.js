@@ -3,14 +3,13 @@
  */
 import {HintsStore} from "./store";
 
-export function CalculateHints (user) {
+export function CalculateHints(user) {
 
     let hintsCost = {};
 
     Object.keys(HintsStore.getAll()).map(hintName => {
-        hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, user.hintsUsedCounter[hintName]?user.hintsUsedCounter[hintName]:0 );
-    })
-
+        hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, user.hintsUsedCounter[hintName] ? user.hintsUsedCounter[hintName] : 0);
+    });
 
     return hintsCost;
 }

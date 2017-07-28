@@ -21,7 +21,7 @@ export default class isGame extends Component {
         let className = 'btn ';
 
         this.props.game.answers.map(answer => {
-            if (answer.id == answerId) {
+            if (answer.id === answerId) {
                 isWrong = answer.isWrong;
             }
         });
@@ -54,9 +54,8 @@ export default class isGame extends Component {
     }
 
     render() {
-
         const game = this.props.game;
-        console.log(game);
+
         return (
             <div>
                 <Timer endTime={game.endTime}/>

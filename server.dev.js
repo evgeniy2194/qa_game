@@ -1,45 +1,37 @@
 import https from 'https';
 import fs from 'fs';
-import mongoose from 'mongoose';
 import config from './config/config';
+import connect from './src/database/connect';
 import app from './src/app';
 import {createSocket} from './src/socket/socket';
 import GameCreator from './src/utils/gameCreator';
-import Question from './src/models/question';
+import Question from './src/database/models/question';
+import QuestionAnswer from './src/database/models/QuestionAnswer';
 
 import {QueueStore, QuestionsStore} from './src/utils/store';
 import startGame from './src/socket/startGame';
-
 
 const privateKey = fs.readFileSync('config/ssl/server.key', 'utf8');
 const certificate = fs.readFileSync('config/ssl/server.crt', 'utf8');
 const httpsServer = https.createServer({key: privateKey, cert: certificate}, app);
 const port = config.app.port;
-
-const db = mongoose.connection;
 const gameCreator = new GameCreator(config, QueueStore, startGame);
 
 createSocket(httpsServer);
 gameCreator.run();
 
-mongoose.connect('mongodb://localhost/game', {useMongoClient: true});
+httpsServer.listen(port, function (error) {
+    if (error) throw error;
 
-//Load all questions
-Question.find({}).then((data) => {
-    let i = data.length;
+    console.info("Server started on port %s.", port);
+});
 
-    while(i--) {
-        let item = data[i];
-        QuestionsStore.add(String(item._id), item);
+// //Load all questions
+Question.findAll({include: [{model: QuestionAnswer, as: 'answers'}]}).then((questions) => {
+    let i = questions.length;
+
+    while (i--) {
+        let question = questions[i];
+        QuestionsStore.add(question.id, question);
     }
 });
-
-db.once('open', () => {
-    httpsServer.listen(port, function (error) {
-        if (error) throw error;
-
-        console.info("Server started on port %s.", port);
-    });
-});
-
-db.on('error', console.error.bind(console, 'connection error:'));
