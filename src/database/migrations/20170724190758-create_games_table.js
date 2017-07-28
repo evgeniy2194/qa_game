@@ -12,7 +12,9 @@ module.exports = {
                 autoIncrement: true
             },
             startAt: {
-                type: Sequelize.DATE
+                type: Sequelize.DATE,
+                allowNull: false,
+                defaultValue: Sequelize.literal('NOW()')
             },
             endAt: {
                 type: Sequelize.DATE,
@@ -112,7 +114,7 @@ module.exports = {
 
     down: (queryInterface, Sequelize) => {
         return queryInterface.dropTable(gameQuestions).then(()=> {
-            queryInterface.dropTable(gamePlayers);
+            queryInterface.dropTable(gameUsers);
         }).then(() => {
             queryInterface.dropTable(gameAnswers);
         }).then(() => {
