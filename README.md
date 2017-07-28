@@ -2,7 +2,7 @@
 
 Создай базу MySQL с названием game и юзера game c паролем aq1sw2de3.
 
-Потом git pull npm install
+npm install
 
 npm install sequelize -g
 
