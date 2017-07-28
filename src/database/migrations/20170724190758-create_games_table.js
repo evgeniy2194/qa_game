@@ -11,12 +11,12 @@ module.exports = {
                 primaryKey: true,
                 autoIncrement: true
             },
-            startAt: {
+            startedAt: {
                 type: Sequelize.DATE,
                 allowNull: false,
                 defaultValue: Sequelize.literal('NOW()')
             },
-            endAt: {
+            finishedAt: {
                 type: Sequelize.DATE,
                 defaultValue: null
             }

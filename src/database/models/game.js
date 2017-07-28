@@ -7,9 +7,8 @@ const Game = connect.define('Game', {
         primaryKey: true,
         autoIncrement: true
     },
-    createdAt: Sequelize.DATE,
-    updatedAt: Sequelize.DATE,
-
+    startedAt: Sequelize.DATE,
+    finishedAt: Sequelize.DATE
 });
 
 export default Game;
