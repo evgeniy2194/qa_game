@@ -1,7 +1,7 @@
 # qa_game
 
 
-sequelize db:migrateSent 
+sequelize db:migrate
 
 Вернуться назад:
 
