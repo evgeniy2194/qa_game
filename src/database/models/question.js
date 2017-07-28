@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize';
 import connect from '../connect';
-import QuestionAnswers from './questionAnswers';
 
 const Question = connect.define('Question', {
     id: {
@@ -15,8 +14,6 @@ const Question = connect.define('Question', {
 }, {
     timestamps: false
 });
-
-Question.hasMany(QuestionAnswers, {as: 'Answers'});
 
 export default Question;
 
