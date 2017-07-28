@@ -6,7 +6,7 @@ import app from './src/app';
 import {createSocket} from './src/socket/socket';
 import GameCreator from './src/utils/gameCreator';
 import Question from './src/database/models/question';
-import QuestionAnswer from './src/database/models/QuestionAnswer';
+import QuestionAnswer from './src/database/models/questionAnswers';
 
 import {QueueStore, QuestionsStore} from './src/utils/store';
 import startGame from './src/socket/startGame';
@@ -27,11 +27,16 @@ httpsServer.listen(port, function (error) {
 });
 
 // //Load all questions
-Question.findAll({include: [{model: QuestionAnswer, as: 'answers'}]}).then((questions) => {
+//console.log('here is');
+const sql = "SELECT Q.id, Q.question FROM Questions Q";
+connect.query(sql).then((questions) => {
+    questions = questions[0];
     let i = questions.length;
 
     while (i--) {
         let question = questions[i];
+
         QuestionsStore.add(question.id, question);
     }
 });
+//Question.findAll({include: [{model: QuestionAnswer, as: 'answers'}]}).then((questions) => {});

@@ -43,7 +43,7 @@ export default function (socket) {
 
         //Если игрок не новый и у него есть незаконченная игра
         if (!created) {
-            const sql = "SELECT g.id FROM games g INNER JOIN game_players p ON p.gameId = g.id WHERE g.endAt IS NULL";
+            const sql = "SELECT g.id FROM Games g INNER JOIN GameUsers p ON p.gameId = g.id WHERE g.endAt IS NULL";
             connect.query(sql).then((game) => {
                 if (game) {
                     restoreGame(socket, GamesStore.get(game.id));

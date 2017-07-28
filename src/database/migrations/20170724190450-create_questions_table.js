@@ -1,7 +1,7 @@
 'use strict';
 
-const questions = 'questions';
-const questionAnswers = 'question_answers';
+const questions = 'Questions';
+const questionAnswers = 'QuestionAnswers';
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
@@ -28,7 +28,7 @@ module.exports = {
                     type: Sequelize.INTEGER.UNSIGNED,
                     allowNull: false,
                     references: {
-                        model: 'questions',
+                        model: questions,
                         key: 'id'
                     },
                 },

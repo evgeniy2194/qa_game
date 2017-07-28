@@ -1,7 +1,7 @@
-const games = 'games';
-const gameAnswers = 'game_answers';
-const gamePlayers = 'game_players';
-const gameQuestions = 'game_questions';
+const games = 'Games';
+const gameAnswers = 'GameAnswers';
+const gameUsers = 'GameUsers';
+const gameQuestions = 'GameQuestions';
 
 module.exports = {
     up: (queryInterface, Sequelize) => {
@@ -18,6 +18,7 @@ module.exports = {
                 type: Sequelize.DATE,
                 defaultValue: null
             }
+
         }, {
             charset: 'UTF8',
         }).then(() => {
@@ -25,28 +26,28 @@ module.exports = {
                 gameId: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     references: {
-                        model: 'games',
+                        model: games,
                         key: 'id'
                     }
                 },
                 questionId: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     references: {
-                        model: 'questions',
+                        model: 'Questions',
                         key: 'id'
                     }
                 },
                 userId: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     references: {
-                        model: 'users',
+                        model: 'Users',
                         key: 'id'
                     }
                 },
                 answerId: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     references: {
-                        model: 'question_answers',
+                        model: 'QuestionAnswers',
                         key: 'id'
                     }
                 },
@@ -61,18 +62,18 @@ module.exports = {
                 charset: 'UTF8',
             });
         }).then(() => {
-            return queryInterface.createTable(gamePlayers, {
+            return queryInterface.createTable(gameUsers, {
                 gameId: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     references: {
-                        model: 'games',
+                        model: games,
                         key: 'id'
                     }
                 },
                 userId: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     references: {
-                        model: 'users',
+                        model: 'Users',
                         key: 'id'
                     }
                 }
@@ -84,14 +85,14 @@ module.exports = {
                 gameId: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     references: {
-                        model: 'games',
+                        model: games,
                         key: 'id'
                     }
                 },
                 questionId: {
                     type: Sequelize.INTEGER.UNSIGNED,
                     references: {
-                        model: 'questions',
+                        model: 'Questions',
                         key: 'id'
                     }
                 }
@@ -101,9 +102,9 @@ module.exports = {
         }).then(() => {
             return queryInterface.addIndex(gameQuestions, ['gameId']);
         }).then(() => {
-            return queryInterface.addIndex(gamePlayers, ['gameId']);
+            return queryInterface.addIndex(gameUsers, ['gameId']);
         }).then(() => {
-            queryInterface.addIndex(gamePlayers, ['userId']);
+            queryInterface.addIndex(gameUsers, ['userId']);
         }).then(() => {
             queryInterface.addIndex(gameAnswers, ['gameId']);
         });
