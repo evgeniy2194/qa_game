@@ -10,6 +10,7 @@ import RatingArea from './ratingArea';
 import Game from './game';
 import FriendsList from './friendsList';
 import SettingsArea from "./settings";
+import QuestsArea from "./questsArea";
 import {exitFullscreen, toggleFullscreen} from "../utils/fullscreen";
 
 class App extends Component {
@@ -41,6 +42,7 @@ class App extends Component {
                           onLeaveGameClick={props.onLeaveGameClick}
                     />
                     <LevelArea user={ props.user }/>
+                    <QuestsArea quests={ props.user.quests}/>
                     <SettingsArea onFullScreenClick={this.onFullScreenClick}/>
                     <CoinsArea coins={ props.user.coins } gems={ props.user.gems }/>
                     <RatingArea />
