@@ -198,4 +198,4 @@ function setDeceleratingTimeout(callback, factor, times) {
     }(times, 0);
 
     setTimeout(internalCallback, 0);
-};
+}

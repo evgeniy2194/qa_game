@@ -35,6 +35,15 @@ export default (socket, data) => {
             isCorrectAnswer: isCorrectAnswer
         });
 
+        //Сохраняем ответ пользователя в базу
+        game.game.setAnswers([answerId], {
+            through: {
+                userId: userId,
+                questionId: currentQuestionId,
+                isCorrect: isCorrectAnswer
+            }
+        });
+
         sendMessage(socket, answerResult(answerId, isCorrectAnswer));
     }
 }
