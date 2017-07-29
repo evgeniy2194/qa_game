@@ -49,9 +49,9 @@ export {Game, User, Question, QuestionAnswer};
  (4, "Синее", false),
  (4, "Черное", true)
 
- INSERT INTO quests (`requirements`, `check`, `rewardCount`, `rewardType`)
+ INSERT INTO quests (`requirements`, `description`, `check`, `rewardCount`, `rewardType`)
  VALUES
- (5, "SELECT count(*) FROM GameUsers WHERE userId = :userId", 1, "gems"),
- (1, "SELECT count(*) FROM GameAnswers WHERE userId = :userId AND isCorrect = true", 2, "gems")
+ (5, "Сыграть 5 игр", "SELECT count(*) FROM GameUsers WHERE userId = :userId", 1, "gems"),
+ (1, "Ответить верно на 1 вопрос", "SELECT count(*) FROM GameAnswers WHERE userId = :userId AND isCorrect = true", 2, "gems")
 
 */

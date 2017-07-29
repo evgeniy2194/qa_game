@@ -11,6 +11,10 @@ module.exports = {
                 primaryKey: true,
                 autoIncrement: true
             },
+            description: {
+                type: Sequelize.STRING(3000),
+                defaultValue: null
+            },
             requirements: {
                 type: Sequelize.INTEGER.UNSIGNED,
                 allowNull: false,
