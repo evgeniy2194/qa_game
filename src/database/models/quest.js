@@ -6,6 +6,10 @@ const Quest = connect.define('Quest', {
         type: Sequelize.INTEGER.UNSIGNED,
         primaryKey: true
     },
+    description: {
+        type: Sequelize.STRING(3000),
+        defaultValue: null
+    },
     requirements: {
         type: Sequelize.INTEGER.UNSIGNED,
         allowNull: false,
