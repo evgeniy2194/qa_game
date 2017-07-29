@@ -19,13 +19,6 @@ Game.belongsToMany(QuestionAnswer, {
     as: 'answers'
 });
 
-Game.belongsToMany(QuestionAnswer, {
-    through: GameAnswer,
-    foreignKey: 'gameId',
-    otherKey: 'answerId',
-    as: 'answers'
-});
-
 UserQuest.belongsTo(Quest, {as: 'quest'});
 UserQuest.belongsTo(User, {as: 'user'});
 

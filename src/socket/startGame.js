@@ -80,6 +80,10 @@ export default function (players, gameConfig) {
             if (players.length === 0) {
                 GamesStore.remove(game.id);
                 clearInterval(interval);
+
+                //Игра закончилась
+                game.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+                game.save();
                 return;
             }
 

@@ -6,6 +6,7 @@ import User from '../database/models/user';
 import restoreGame from './restoreGame';
 import {getExpToLevel} from "../utils/levelCalculation";
 import connect from '../database/connect';
+import Sequelize from 'sequelize';
 
 export default function (socket) {
 
@@ -43,8 +44,9 @@ export default function (socket) {
 
         //Если игрок не новый и у него есть незаконченная игра
         if (!created) {
-            const sql = "SELECT g.id FROM Games g INNER JOIN GameUsers p ON p.gameId = g.id WHERE g.finishedAt IS NULL";
-            connect.query(sql).then((game) => {
+            const sql = "SELECT g.* FROM Games g INNER JOIN GameUsers p ON p.gameId = g.id WHERE g.finishedAt IS NULL LIMIT 1";
+            connect.query(sql, {type: Sequelize.QueryTypes.SELECT}).then((response) => {
+                const game = response[0];
                 if (game) {
                     restoreGame(socket, GamesStore.get(game.id));
                 }

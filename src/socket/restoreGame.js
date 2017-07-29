@@ -9,13 +9,13 @@ export default function (socket, game) {
         const currentQuestionId = currentQuestion._id;
         //const hints = game.hints;
 
-        let hints = {};
-        game.game.users.map(user =>{
-
-            if(socket.userId == user._id ){
-                hints =  CalculateHints(user);
-            }
-        });
+        // let hints = {};
+        // game.game.users.map(user =>{
+        //
+        //     if(socket.userId == user._id ){
+        //         hints =  CalculateHints(user);
+        //     }
+        // });
 
         game.players.push(socket);
 
