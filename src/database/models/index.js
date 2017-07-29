@@ -19,10 +19,12 @@ Game.belongsToMany(QuestionAnswer, {
     as: 'answers'
 });
 
+Quest.belongsToMany(User, {through: UserQuest, as: 'users'});
+User.belongsToMany(Quest, {through: UserQuest, as: 'quests'});
 UserQuest.belongsTo(Quest, {as: 'quest'});
 UserQuest.belongsTo(User, {as: 'user'});
 
-export {Game, User, Question, QuestionAnswer};
+export {Game, User, Question, QuestionAnswer, Quest, UserQuest};
 
 /**
  INSERT into Questions (question) VALUES
@@ -54,4 +56,4 @@ export {Game, User, Question, QuestionAnswer};
  (5, "Сыграть 5 игр", "SELECT count(*) FROM GameUsers WHERE userId = :userId", 1, "gems"),
  (1, "Ответить верно на 1 вопрос", "SELECT count(*) FROM GameAnswers WHERE userId = :userId AND isCorrect = true", 2, "gems")
 
-*/
+ */
