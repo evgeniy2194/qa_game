@@ -42,7 +42,7 @@ export default function (players, gameConfig) {
     });
 
     //Сохраняем игру в базу
-    Game.create({startAt: new Date}).then(game => {
+    Game.create().then(game => {
 
         // game.users = game.users.map(user =>{
         //
@@ -63,17 +63,9 @@ export default function (players, gameConfig) {
         //Добавляем игру в список активных
         GamesStore.add(game.id, currentGame);
 
-        //ToDo: replace by sequelize relationship
-        //Сохраняем инфу о игроках
-        playerModels.forEach(player => {
-            connect.query("INSERT INTO game_players (gameId, userId) VALUE (" + game.id + ", " + player.id + ")");
-        });
-
-        //ToDo: replace by sequelize relationship
-        //Сохраняеем инфу о вопросах
-        questions.forEach(question => {
-            connect.query("INSERT INTO game_questions (gameId, questionId) VALUE (" + game.id + ", " + question.id + ")");
-        });
+        //Сохраняем инфу о вопросах и игроках
+        game.setUsers(playerModels);
+        game.setQuestions(questions);
 
         //Изначальная стоимость подсказок
         sendMessage(players, sendHintsCost(hintsCost));
@@ -88,6 +80,10 @@ export default function (players, gameConfig) {
             if (players.length === 0) {
                 GamesStore.remove(game.id);
                 clearInterval(interval);
+
+                //Игра закончилась
+                game.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+                game.save();
                 return;
             }
 
@@ -159,7 +155,7 @@ export default function (players, gameConfig) {
                     GamesStore.remove(game.id);
 
                     //Игра закончилась
-                    game.endAt = new Date;
+                    game.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
                     game.save();
                 });
 
@@ -206,4 +202,4 @@ function setDeceleratingTimeout(callback, factor, times) {
     }(times, 0);
 
     setTimeout(internalCallback, 0);
-};
+}

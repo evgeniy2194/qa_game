@@ -7,7 +7,7 @@ const config = {
     game: {
         totalQuestion: 4,   //Колл-во вопросов в игре
         playersCount: 1,    //Колл-во игроков в игре
-        roundTime: 10500     //Время одного раунда
+        roundTime: 2500     //Время одного раунда
     }
 };
 

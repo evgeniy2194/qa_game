@@ -1,7 +1,5 @@
 import Sequelize from 'sequelize';
 import connect from '../connect';
-import User from './user';
-import Question from './question';
 
 const Game = connect.define('Game', {
     id: {
@@ -9,12 +7,8 @@ const Game = connect.define('Game', {
         primaryKey: true,
         autoIncrement: true
     },
-    createdAt: Sequelize.DATE,
-    updatedAt: Sequelize.DATE,
-
+    startedAt: Sequelize.DATE,
+    finishedAt: Sequelize.DATE
 });
-
-//Game.hasMany(User, {through: 'GameUsers', as: 'users'});
-//Game.hasMany(Question, {through: 'GameQuestions', as: 'questions'});
 
 export default Game;

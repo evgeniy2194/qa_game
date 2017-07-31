@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize';
 import connect from '../connect';
-import Question from './question';
 
 const QuestionAnswer = connect.define('QuestionAnswer', {
     id: {
@@ -10,11 +9,7 @@ const QuestionAnswer = connect.define('QuestionAnswer', {
     },
     questionId: {
         type: Sequelize.INTEGER.UNSIGNED,
-        allowNull: false,
-        // references: {
-        //     model: 'questions',
-        //     key: 'id'
-        // },
+        allowNull: false
     },
     answer: {
         type: Sequelize.STRING,
@@ -27,7 +22,5 @@ const QuestionAnswer = connect.define('QuestionAnswer', {
 }, {
     timestamps: false
 });
-
-// QuestionAnswer.belongsTo(Question);
 
 export default QuestionAnswer;

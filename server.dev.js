@@ -1,12 +1,10 @@
 import https from 'https';
 import fs from 'fs';
 import config from './config/config';
-import connect from './src/database/connect';
 import app from './src/app';
 import {createSocket} from './src/socket/socket';
 import GameCreator from './src/utils/gameCreator';
-import Question from './src/database/models/question';
-import QuestionAnswer from './src/database/models/questionAnswers';
+import {Question, QuestionAnswer} from './src/database/models';
 
 import {QueueStore, QuestionsStore} from './src/utils/store';
 import startGame from './src/socket/startGame';
@@ -27,10 +25,7 @@ httpsServer.listen(port, function (error) {
 });
 
 // //Load all questions
-//console.log('here is');
-const sql = "SELECT Q.id, Q.question FROM Questions Q";
-connect.query(sql).then((questions) => {
-    questions = questions[0];
+Question.findAll({include: [{model: QuestionAnswer, as: 'answers'}]}).then((questions) => {
     let i = questions.length;
 
     while (i--) {
@@ -39,4 +34,3 @@ connect.query(sql).then((questions) => {
         QuestionsStore.add(question.id, question);
     }
 });
-//Question.findAll({include: [{model: QuestionAnswer, as: 'answers'}]}).then((questions) => {});
