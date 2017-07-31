@@ -1,7 +1,7 @@
 'use strict';
 
 const quests = 'Quests';
-const userQuests = 'userQuests';
+const userQuests = 'UserQuests';
 
 module.exports = {
     up: function (queryInterface, Sequelize) {

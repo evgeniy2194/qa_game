@@ -11,23 +11,21 @@ module.exports = {
             },
             gameId: {
                 type: Sequelize.INTEGER.UNSIGNED,
-                defaultValue: null,
                 references: {
-                    model: 'Game',
+                    model: 'Games',
                     key: 'id'
                 },
             },
             userId: {
                 type: Sequelize.INTEGER.UNSIGNED,
-                defaultValue: null,
                 references: {
-                    model: 'User',
+                    model: 'Users',
                     key: 'id'
                 },
             },
+
             hintId: {
                 type: Sequelize.INTEGER.UNSIGNED,
-                defaultValue: null,
                 references: {
                     model: 'Hints',
                     key: 'id'
@@ -35,7 +33,6 @@ module.exports = {
             },
             questionId: {
                 type: Sequelize.INTEGER.UNSIGNED,
-                defaultValue: null,
                 references: {
                     model: 'Questions',
                     key: 'id'

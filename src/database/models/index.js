@@ -5,6 +5,10 @@ import QuestionAnswer from './questionAnswer';
 import GameAnswer from './gameAnswer';
 import Quest from './quest';
 import UserQuest from './userQuest';
+import Hints from './hints';
+import HintsUsing from './hintsUsing';
+import HintCosts from './hintCosts';
+
 
 Question.hasMany(QuestionAnswer, {as: 'answers'});
 QuestionAnswer.belongsTo(Question, {as: 'question'});
@@ -24,7 +28,10 @@ User.belongsToMany(Quest, {through: UserQuest, as: 'quests'});
 UserQuest.belongsTo(Quest, {as: 'quest'});
 UserQuest.belongsTo(User, {as: 'user'});
 
-export {Game, User, Question, QuestionAnswer, Quest, UserQuest};
+Hints.hasMany(HintCosts, {as: 'costs'});
+
+
+export {Game, User, Question, QuestionAnswer, Quest, UserQuest, Hints, HintCosts};
 
 /**
  INSERT into Questions (question) VALUES
@@ -49,11 +56,23 @@ export {Game, User, Question, QuestionAnswer, Quest, UserQuest};
  (4, "Мертвое", false),
  (4, "Красное", false),
  (4, "Синее", false),
- (4, "Черное", true)
+ (4, "Черное", true);
 
- INSERT INTO quests (`requirements`, `description`, `check`, `rewardCount`, `rewardType`)
+ INSERT INTO Quests (`requirements`, `description`, `check`, `rewardCount`, `rewardType`)
  VALUES
  (5, "Сыграть 5 игр", "SELECT count(*) FROM GameUsers WHERE userId = :userId", 1, "gems"),
- (1, "Ответить верно на 1 вопрос", "SELECT count(*) FROM GameAnswers WHERE userId = :userId AND isCorrect = true", 2, "gems")
+ (1, "Ответить верно на 1 вопрос", "SELECT count(*) FROM GameAnswers WHERE userId = :userId AND isCorrect = true", 2, "gems");
+
+ insert into Hints (name) values ('50hint'), ('VeryExpensive');
+
+ insert into HintCosts (hintId, countOfUse, coins, gems) values
+ (1, 0, 100, 0),
+ (1, 1, 200, 2),
+ (1, 2, 300, 4),
+ (1, 3, 400, 8),
+ (2, 0, 100, 100),
+ (2, 1, 200, 200),
+ (2, 2, 300, 400),
+ (2, 3, 400, 800);
 
  */

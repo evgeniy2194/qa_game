@@ -1,5 +1,5 @@
 'use strict';
-const tableName='HintsCosts';
+const tableName='HintCosts';
 
 module.exports = {
     up: function (queryInterface, Sequelize) {
