@@ -43,25 +43,24 @@ export default function (socket) {
         //Отправляем клиенту данные о пользователе
         sendMessage(socket, sendUserInfo(user));
 
-        //ToDo: Get random quest.
-        //ToDo: Create correct datefrom and datetill
-        //ToDo: Move to enother file
-        //ToDO: send to user quest info
-        //Ищем квесты пользователя
-        Quest.findAll({
-            include: [{
-                model: User,
-                as: 'users',
-                required: true,
-                where: {id: userId}
-            }]
+        user.getQuests({
+            through: {
+                model: UserQuest,
+                where: {
+                    isReceivedReward: false,
+                    dateFrom: {
+                        $lte: moment().format('YYYY-MM-DD HH:mm:ss')
+                    },
+                    dateTill: {
+                        $gt: moment().format('YYYY-MM-DD HH:mm:ss')
+                    }
+                }
+            }
         }).then(response => {
             //Если нет квестов - генерируем случайный квест
             if (response.length === 0) {
-                return Quest.find({where: {id: 1}});
+                return Quest.findOne({order: [Sequelize.fn('RAND')]});
             }
-
-            return null;
         }).then(quest => {
             if (quest) {
                 return user.addQuest(quest, {
@@ -69,7 +68,7 @@ export default function (socket) {
                         isDone: false,
                         isReceivedReward: false,
                         dateFrom: moment().format('YYYY-MM-DD HH:mm:ss'),
-                        dateTill: moment().format('YYYY-MM-DD HH:mm:ss')
+                        dateTill: moment().add(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
                     }
                 });
             }
