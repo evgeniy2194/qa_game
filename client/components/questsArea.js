@@ -9,7 +9,11 @@ export default class QuestsArea extends Component {
             Задания:
             {quests.map(
                 (quest) => {
-                    return ( <div key={quest.id}>{quest.description}</div> );
+                    return ( <div key={quest.id}>
+                            {quest.description}  0/{quest.requirements} <br/>
+                            Награда: {quest.rewardCount} {quest.rewardType}
+                        </div>
+                    );
                 }
             )}
         </div>

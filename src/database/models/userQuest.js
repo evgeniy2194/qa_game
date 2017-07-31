@@ -16,6 +16,11 @@ const UserQuest = connect.define('UserQuest', {
         type: Sequelize.DATE,
         allowNull: false
     },
+    progress: {
+        type: Sequelize.INTEGER.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0
+    },
     isDone: {
         type: Sequelize.BOOLEAN,
         defaultValue: false

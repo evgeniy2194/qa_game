@@ -1,6 +1,6 @@
 import checkAuthKey from '../utils/chekAuthKey';
 import {UsersStore, GamesStore} from '../utils/store';
-import {sendUserInfo} from '../actions/userActions';
+import {sendUserInfo, sendQuestsInfo} from '../actions/userActions';
 import sendMessage from './sendMessage';
 import {User, Quest, UserQuest} from '../database/models';
 import restoreGame from './restoreGame';
@@ -43,36 +43,45 @@ export default function (socket) {
         //Отправляем клиенту данные о пользователе
         sendMessage(socket, sendUserInfo(user));
 
-        //ToDo: Get random quest.
-        //ToDo: Create correct datefrom and datetill
         //ToDo: Move to enother file
         //ToDO: send to user quest info
-        //Ищем квесты пользователя
-        Quest.findAll({
-            include: [{
-                model: User,
-                as: 'users',
-                required: true,
-                where: {id: userId}
-            }]
+        user.getQuests({
+            through: {
+                model: UserQuest,
+                where: {
+                    isReceivedReward: false,
+                    dateFrom: {
+                        $lt: moment().format('YYYY-MM-DD HH:mm:ss')
+                    },
+                    dateTill: {
+                        $gt: moment().format('YYYY-MM-DD HH:mm:ss')
+                    }
+                }
+            }
         }).then(response => {
             //Если нет квестов - генерируем случайный квест
             if (response.length === 0) {
-                return Quest.find({where: {id: 1}});
+                return Quest.findOne({order: [Sequelize.fn('RAND')]});
+            } else {
+                sendMessage(socket, sendQuestsInfo(response, 0));
             }
 
             return null;
         }).then(quest => {
             if (quest) {
+                sendMessage(socket, sendQuestsInfo(quest, 0));
                 return user.addQuest(quest, {
                     through: {
+                        progress: 0,
                         isDone: false,
                         isReceivedReward: false,
                         dateFrom: moment().format('YYYY-MM-DD HH:mm:ss'),
-                        dateTill: moment().format('YYYY-MM-DD HH:mm:ss')
+                        dateTill: moment().add(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
                     }
                 });
             }
+        }).then((data) => {
+//
         });
 
         //Если игрок не новый и у него есть незаконченная игра
