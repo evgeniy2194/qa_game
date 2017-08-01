@@ -10,9 +10,9 @@ import Sequelize from 'sequelize';
 import moment from 'moment';
 
 export default function (socket) {
-
-    let query = socket.handshake.query;
-    let uid = query.uid;
+    const query = socket.handshake.query;
+    const uid = query.uid;
+    const now = moment().format('YYYY-MM-DD HH:mm:ss');
 
     //Проверяем авторизирован ли пользователь
     if (!checkAuthKey(uid, query.authKey) && process.env.NODE_ENV === 'production') {
@@ -30,8 +30,20 @@ export default function (socket) {
             firstName: query.firstName,
             lastName: query.lastName,
             expToLevel: getExpToLevel(2)
-        }
+        },
+        include: [{
+            model: Quest,
+            as: 'quests',
+            through: {
+                where: {
+                    isReceivedReward: false,
+                    dateFrom: { $lte: now },
+                    dateTill: { $gt: now }
+                }
+            }
+        }]
     }).then((data, created) => {
+        //ToDo: Записывать в Store обьект пользователя содержащий информацию о квестах, подсказках и т.д
         const user = data[0];
         const userId = user.id;
 
@@ -43,33 +55,12 @@ export default function (socket) {
         //Отправляем клиенту данные о пользователе
         sendMessage(socket, sendUserInfo(user));
 
-        //ToDo: Move to enother file
-        //ToDO: send to user quest info
-        user.getQuests({
-            through: {
-                model: UserQuest,
-                where: {
-                    isReceivedReward: false,
-                    dateFrom: {
-                        $lt: moment().format('YYYY-MM-DD HH:mm:ss')
-                    },
-                    dateTill: {
-                        $gt: moment().format('YYYY-MM-DD HH:mm:ss')
-                    }
-                }
-            }
-        }).then(response => {
-            //Если нет квестов - генерируем случайный квест
-            if (response.length === 0) {
-                return Quest.findOne({order: [Sequelize.fn('RAND')]});
-            } else {
-                sendMessage(socket, sendQuestsInfo(response, 0));
-            }
+        const quests = user.quests;
 
-            return null;
-        }).then(quest => {
-            if (quest) {
-                sendMessage(socket, sendQuestsInfo(quest, 0));
+        //Если нет квестов
+        if (quests.length === 0) {
+            //Если нет квестов - генерируем случайный квест
+            Quest.findOne({order: [Sequelize.fn('RAND')]}).then(quest => {
                 return user.addQuest(quest, {
                     through: {
                         progress: 0,
@@ -79,11 +70,29 @@ export default function (socket) {
                         dateTill: moment().add(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
                     }
                 });
-            }
-        }).then((data) => {
-//
-        });
+            }).then(() => {
+                return user.getQuests({
+                    through: {
+                        model: UserQuest,
+                        where: {
+                            isReceivedReward: false,
+                            dateFrom: {
+                                $lte: moment().format('YYYY-MM-DD HH:mm:ss')
+                            },
+                            dateTill: {
+                                $gt: moment().format('YYYY-MM-DD HH:mm:ss')
+                            }
+                        }
+                    }
+                })
+            }).then(quests => {
+                sendMessage(socket, sendQuestsInfo(quests));
+            })
+        } else {
+            sendMessage(socket, sendQuestsInfo(quests));
+        }
 
+        //ToDo: Проверять активную игру в обьекте пользователя в Store
         //Если игрок не новый и у него есть незаконченная игра
         if (!created) {
             const sql = "SELECT g.* FROM Games g INNER JOIN GameUsers p ON p.gameId = g.id WHERE g.finishedAt IS NULL LIMIT 1";
