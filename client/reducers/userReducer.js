@@ -4,7 +4,9 @@ export default function (state = {}, action) {
         case 'USER_INFO':
             return {...state, ...action.data};
         case 'LOADED_FRIENDS':
-            return {...state, ...{friends: (action.data)?action.data:[]}};
+            return {...state, ...{friends: action.data || []}};
+        case 'QUESTS_INFO':
+            return {...state, ...{quests: action.data || []}};
         default:
             return state;
     }

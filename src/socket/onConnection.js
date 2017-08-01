@@ -1,6 +1,6 @@
 import checkAuthKey from '../utils/chekAuthKey';
 import {UsersStore, GamesStore} from '../utils/store';
-import {sendUserInfo} from '../actions/userActions';
+import {sendUserInfo, sendQuestsInfo} from '../actions/userActions';
 import sendMessage from './sendMessage';
 import {User, Quest, UserQuest} from '../database/models';
 import restoreGame from './restoreGame';
@@ -43,13 +43,15 @@ export default function (socket) {
         //Отправляем клиенту данные о пользователе
         sendMessage(socket, sendUserInfo(user));
 
+        //ToDo: Move to enother file
+        //ToDO: send to user quest info
         user.getQuests({
             through: {
                 model: UserQuest,
                 where: {
                     isReceivedReward: false,
                     dateFrom: {
-                        $lte: moment().format('YYYY-MM-DD HH:mm:ss')
+                        $lt: moment().format('YYYY-MM-DD HH:mm:ss')
                     },
                     dateTill: {
                         $gt: moment().format('YYYY-MM-DD HH:mm:ss')
@@ -60,11 +62,17 @@ export default function (socket) {
             //Если нет квестов - генерируем случайный квест
             if (response.length === 0) {
                 return Quest.findOne({order: [Sequelize.fn('RAND')]});
+            } else {
+                sendMessage(socket, sendQuestsInfo(response, 0));
             }
+
+            return null;
         }).then(quest => {
             if (quest) {
+                sendMessage(socket, sendQuestsInfo(quest, 0));
                 return user.addQuest(quest, {
                     through: {
+                        progress: 0,
                         isDone: false,
                         isReceivedReward: false,
                         dateFrom: moment().format('YYYY-MM-DD HH:mm:ss'),
@@ -72,6 +80,8 @@ export default function (socket) {
                     }
                 });
             }
+        }).then((data) => {
+//
         });
 
         //Если игрок не новый и у него есть незаконченная игра
