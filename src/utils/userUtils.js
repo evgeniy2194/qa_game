@@ -2,8 +2,12 @@
  * Created by vision on 8/1/17.
  */
 import GemsAndCoinsUsing from '../database/models/';
+import Sequelize from 'sequelize';
 import {User, Quest, UserQuest} from '../database/models';
 import moment from 'moment';
+import connect from '../database/connect';
+import sendMessage from '../socket/sendMessage';
+import {sendQuestsInfo} from '../actions/userActions';
 
 export function decreaseGems(user, amount) {
 
@@ -73,6 +77,12 @@ export function genereteRandomQuest(user) {
     });
 }
 
+/**
+ * Returns active user quests
+ *
+ * @param user
+ * @returns array
+ */
 export function getActiveQuests(user) {
     const now = moment().format('YYYY-MM-DD HH:mm:ss');
 
@@ -87,6 +97,36 @@ export function getActiveQuests(user) {
         }
     });
 }
+
+/**
+ * Refreshes user quests and sends info about it
+ *
+ * @param user
+ * @param socket
+ */
+export function refreshQuests(user, socket) {
+    let quests = user.quests;
+
+    quests.forEach(quest => {
+        let check = quest.check;
+        let promises = [];
+
+        //Array of Promises
+        promises.push(
+            connect.query(check, {replacements: {userId: user.id}}).spread(results => {
+                quest.UserQuest.progress = (results[0] && results[0].progress) || 0;
+
+                return quest.UserQuest.save();
+            })
+        );
+
+        //Waits for complete all promises and sends info
+        Promise.all(promises).then(() => {
+            sendMessage(socket, sendQuestsInfo(user.quests));
+        });
+    });
+}
+
 
 function _changeGemsAmount() {
 

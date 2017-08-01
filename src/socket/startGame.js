@@ -4,8 +4,8 @@ import {GamesStore, UsersStore, QuestionsStore, HintsStore} from '../utils/store
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
 import {startGame, sendQuestion, gameResult, sendHintsCost} from '../actions/gameActions';
-import {getExpToLevel, getLevelByExp} from "../utils/levelCalculation";
-import connect from '../database/connect';
+import {getExpToLevel, getLevelByExp} from '../utils/levelCalculation';
+import {refreshQuests} from '../utils/userUtils';
 
 export default function (players, gameConfig) {
 
@@ -143,10 +143,12 @@ export default function (players, gameConfig) {
                     user.expToLevel = getExpToLevel(userLevel + 1);
 
                     user.save().then(() => {
-                        //Обновляем юзера
                         players.forEach(player => {
                             if (player.userId === userId) {
+                                //Обновляем юзера
                                 sendMessage(player, sendUserInfo(user));
+                                //Пересчитываем квесты
+                                refreshQuests(user, player);
                             }
                         });
                     });

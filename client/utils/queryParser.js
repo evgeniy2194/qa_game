@@ -3,7 +3,6 @@ import url from 'url';
 export function getAppParams() {
 
     let data;
-    console.log(process);
 
     if ( true ) {
 

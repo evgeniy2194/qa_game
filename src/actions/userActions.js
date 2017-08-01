@@ -14,9 +14,24 @@ export function sendUserInfo(user) {
     }
 }
 
-export function sendQuestsInfo(quests, progress) {
+export function sendQuestsInfo(data) {
+    let quests = [];
+    data = data instanceof Array ? data : [data];
+
+    data.forEach(quest => {
+        quests.push({
+            description: quest.description,
+            requirements: quest.requirements,
+            rewardCount: quest.rewardCount,
+            rewardType: quest.rewardType,
+            questId: quest.id,
+            id: quest.UserQuest.id,
+            progress: quest.UserQuest.progress
+        });
+    });
+
     return {
         type: 'QUESTS_INFO',
-        data: quests instanceof Array ? quests : [quests]
+        data: quests
     }
 }
