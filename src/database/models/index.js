@@ -60,8 +60,8 @@ export {Game, User, Question, QuestionAnswer, Quest, UserQuest, Hints, HintCosts
 
  INSERT INTO Quests (`requirements`, `description`, `check`, `rewardCount`, `rewardType`)
  VALUES
- (5, "Сыграть 5 игр", "SELECT count(*) FROM GameUsers WHERE userId = :userId", 1, "gems"),
- (1, "Ответить верно на 1 вопрос", "SELECT count(*) FROM GameAnswers WHERE userId = :userId AND isCorrect = true", 2, "gems");
+ (5, "Сыграть 5 игр", "SELECT count(*) as progress FROM GameUsers WHERE userId = :userId", 1, "gems"),
+ (1, "Ответить верно на 1 вопрос", "SELECT count(*) as progress FROM GameAnswers WHERE userId = :userId AND isCorrect = true", 2, "gems");
 
  insert into Hints (name) values ('50hint'), ('VeryExpensive');
 
