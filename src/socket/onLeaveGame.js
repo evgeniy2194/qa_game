@@ -3,30 +3,22 @@
  */
 import {GamesStore, UsersStore} from '../utils/store';
 
-export default (socket) => {
+export default (user) => {
 
-    const user = UsersStore.get(socket.userId);
     //Достаем игру с хранилища
-    let game = GamesStore.get(user.currentGameId);
+    const game = GamesStore.get(user.gameId);
 
     //Если такой игры нет - ничего не делаем
     if (!game) return null;
 
-    game.players = game.players.filter(player => {
-        if (player.userId !== socket.userId) {
-            return player;
+    //Удаляем игрока со списка игроков
+    game.users = game.users.filter(item => {
+        if (item.userId !== user.id) {
+            return item;
         }
     });
 
-    game.game.users = game.game.users.filter(player => {
+    user.gameId = null;
 
-        if (player._id !== socket.userId) {
-            return player;
-        }
-    });
-
-    user.currentGameId = null;
-
-    user.model.save();
-    game.game.save();
+    game.model.save();
 }

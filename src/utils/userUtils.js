@@ -74,6 +74,8 @@ export function genereteRandomQuest(user) {
                 dateTill: moment().add(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
             }
         });
+    }).then(() => {
+        return getActiveQuests(user);
     });
 }
 
@@ -123,7 +125,7 @@ export function refreshQuests(user) {
 
         //Waits for complete all promises and sends info
         Promise.all(promises).then(() => {
-            sendMessage(socket, sendQuestsInfo(user.quests));
+            sendMessage(user, sendQuestsInfo(user.quests));
         });
     });
 }

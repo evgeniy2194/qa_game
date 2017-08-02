@@ -2,14 +2,13 @@ import {GamesStore, UsersStore} from '../utils/store';
 import {answerResult} from '../actions/gameActions';
 import sendMessage from './sendMessage';
 
-export default (socket, data) => {
+export default (user, data) => {
 
     //Достаем игру с хранилища
     let game = GamesStore.get(data.gameId);
 
     const answerId = data.answerId;
-    const userId = socket.userId;
-    const user = UsersStore.get(userId);
+    const userId = user.id;
 
     //Если такой игры нет - ничего не делаем
     if (!game) return null;

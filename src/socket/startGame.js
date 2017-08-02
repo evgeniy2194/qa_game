@@ -15,7 +15,6 @@ export default function (users, gameConfig) {
     //Ищем totalQuestion рандомных вопросы
     let questions = QuestionsStore.getRandom(totalQuestion);
     let questionNumber = 0;     //Номер вопроса
-    let playerModels = [];
     let usersAnswers = new Map;
     let hints = HintsStore.getAll();
     let hintsCost = {};
@@ -32,17 +31,19 @@ export default function (users, gameConfig) {
         })
     });
 
-    users.forEach((user) => {
-        usersAnswers.set(user.id, {
-            correctAnswers: 0,
-            points: 0,
-            answers: new Map
-        });
-    });
 
     //Сохраняем игру в базу
     Game.create().then(gameModel => {
         const gameId = gameModel.id;
+
+        users.forEach((user) => {
+            user.gameId = gameId;
+            usersAnswers.set(user.id, {
+                correctAnswers: 0,
+                points: 0,
+                answers: new Map
+            });
+        });
 
         // game.users = game.users.map(user =>{
         //
@@ -65,32 +66,32 @@ export default function (users, gameConfig) {
         GamesStore.add(gameId, currentGame);
 
         //Сохраняем инфу о вопросах и игроках
-        let playerModels = users.map((user => {
+        let userModels = users.map((user => {
             return user.model;
         }));
-        gameModel.setUsers(playerModels);
+        gameModel.setUsers(userModels);
         gameModel.setQuestions(questions);
 
         //Изначальная стоимость подсказок
         sendMessage(users, sendHintsCost(hintsCost));
 
         //Игра началась
-        sendMessage(users, startGame(gameId, playerModels));
+        sendMessage(users, startGame(gameId, userModels));
 
         //Отправляем новые вопросы по таймауту
         let interval = setDeceleratingTimeout(() => {
             let users = currentGame.users;
 
-            //Заканчиваем игру если все игроки вышли
-            if (users.length === 0) {
-                GamesStore.remove(gameId);
-                clearInterval(interval);
-
-                //Игра закончилась
-                gameModel.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
-                gameModel.save();
-                return;
-            }
+            // //Заканчиваем игру если все игроки вышли
+            // if (users.length === 0) {
+            //     GamesStore.remove(gameId);
+            //     clearInterval(interval);
+            //
+            //     //Игра закончилась
+            //     gameModel.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+            //     gameModel.save();
+            //     return;
+            // }
 
             //Если вопросов нет - конец игры
             if (questionNumber === questions.length) {
@@ -199,10 +200,9 @@ export default function (users, gameConfig) {
 
 function setDeceleratingTimeout(callback, factor, times) {
 
-    let internalCallback = function (tick, counter) {
+    let internalCallback = function (tick) {
         return function () {
             if (--tick >= 0) {
-
                 setTimeout(internalCallback, factor);
                 callback();
             }

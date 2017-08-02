@@ -4,7 +4,7 @@ import {sendUserInfo, sendQuestsInfo} from '../actions/userActions';
 import sendMessage from './sendMessage';
 import restoreGame from './restoreGame';
 import {getExpToLevel} from "../utils/levelCalculation";
-import {findOrCreate, genereteRandomQuest, getActiveQuests} from '../utils/userUtils';
+import {findOrCreate, genereteRandomQuest} from '../utils/userUtils';
 
 export default function (socket) {
     const query = socket.handshake.query;
@@ -23,40 +23,33 @@ export default function (socket) {
         lastName: query.lastName,
         expToLevel: getExpToLevel(2)
     }).then(model => {
-        const userId = model.id;
+        const userId = socket.userId = model.id;
         const quests = model.quests;
 
-        let user = {
-            id: model.id,
-            model: model,
-            socket: socket,
-            quests: model.quests,
-        };
+        let user = UsersStore.get(userId) || {gameId: null, hints: {}};
 
-        socket.userId = userId;
+        user.id = model.id;
+        user.isOnline = true;
+        user.model = model;
+        user.socket = socket;
+        user.quests = model.quests;
+        user.isOnline = true;
 
         //Сохраняем пользователя в хранилище
         UsersStore.add(userId, user);
 
         //Отправляем клиенту данные о пользователе
-        sendMessage(user, sendUserInfo(model));
+        sendMessage(user, sendUserInfo(user.model));
 
-        //Если нет квестов
-        if (quests.length === 0) {
-            //Если нет квестов - генерируем случайный квест
-            genereteRandomQuest(model).then(() => {
-                //Получаем активные квесты
-                return getActiveQuests(model);
-            }).then(quests => {
-                //Отправляем данные о квестах
-                sendMessage(user, sendQuestsInfo(quests));
-            })
-        } else {
-            //Отправляем данные о квестах
+        //Отправка данных о квестах
+        Promise.resolve(quests.length ? quests : genereteRandomQuest(user.model)).then(quests => {
             sendMessage(user, sendQuestsInfo(quests));
-        }
+        });
 
-        //ToDo: Проверять активную игру в обьекте пользователя в Store
-        //restoreGame(socket, GamesStore.get(game.id));
+        if (user.gameId) {
+            console.log('here');
+            restoreGame(user, GamesStore.get(user.gameId));
+            console.log('here2');
+        }
     });
 }
