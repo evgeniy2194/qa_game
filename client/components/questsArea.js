@@ -11,7 +11,8 @@ export default class QuestsArea extends Component {
                 (quest) => {
                     return ( <div key={quest.id}>
                             {quest.description} {quest.progress}/{quest.requirements} <br/>
-                            Награда: {quest.rewardCount} {quest.rewardType}
+                            Награда: {quest.rewardCount} {quest.rewardType} <br/>
+                            {quest.isDone ? 'Выполнен' : ''}
                         </div>
                     );
                 }

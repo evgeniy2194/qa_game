@@ -4,7 +4,7 @@ import {GamesStore, UsersStore, QuestionsStore, HintsStore} from '../utils/store
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
 import {startGame, sendQuestion, gameResult, sendHintsCost} from '../actions/gameActions';
-import {getExpToLevel, getLevelByExp} from '../utils/levelCalculation';
+import {getExpToLevel, getLevelByExp} from '../utils/userUtils';
 import {refreshQuests} from '../utils/userUtils';
 
 export default function (users, gameConfig) {

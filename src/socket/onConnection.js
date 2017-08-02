@@ -3,7 +3,7 @@ import {UsersStore, GamesStore} from '../utils/store';
 import {sendUserInfo, sendQuestsInfo} from '../actions/userActions';
 import sendMessage from './sendMessage';
 import restoreGame from './restoreGame';
-import {getExpToLevel} from "../utils/levelCalculation";
+import {getExpToLevel} from "../utils/userUtils";
 import {findOrCreate, genereteRandomQuest} from '../utils/userUtils';
 
 export default function (socket) {

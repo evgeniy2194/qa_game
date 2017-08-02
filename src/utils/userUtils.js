@@ -70,8 +70,8 @@ export function genereteRandomQuest(user) {
                 progress: 0,
                 isDone: false,
                 isReceivedReward: false,
-                dateFrom: moment().format('YYYY-MM-DD HH:mm:ss'),
-                dateTill: moment().add(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
+                dateFrom: moment().startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+                dateTill: moment().endOf('day').format('YYYY-MM-DD HH:mm:ss')
             }
         });
     }).then(() => {
@@ -107,21 +107,24 @@ export function getActiveQuests(user) {
  */
 export function refreshQuests(user) {
     let userModel = user.model;
-    let socket = user.socket;
     let quests = userModel.quests;
 
     quests.forEach(quest => {
         let check = quest.check;
         let promises = [];
+        let userQuest = quest.UserQuest;
 
         //Array of Promises
-        promises.push(
-            connect.query(check, {replacements: {userId: user.id}}).spread(results => {
-                quest.UserQuest.progress = (results[0] && results[0].progress) || 0;
+        if (!userQuest.isDone) {
+            promises.push(
+                connect.query(check, {replacements: {userId: user.id}}).spread(results => {
+                    userQuest.progress = (results[0] && results[0].progress) || 0;
+                    userQuest.isDone = quest.requirements < userQuest.progress;
 
-                return quest.UserQuest.save();
-            })
-        );
+                    return userQuest.save();
+                })
+            );
+        }
 
         //Waits for complete all promises and sends info
         Promise.all(promises).then(() => {
@@ -130,6 +133,13 @@ export function refreshQuests(user) {
     });
 }
 
+export function getExpToLevel(lvl) {
+    return 100 * Math.pow(lvl - 1, 2);
+}
+
+export function getLevelByExp(exp) {
+    return Math.ceil(Math.sqrt(exp / 100));
+}
 
 function _changeGemsAmount() {
 
