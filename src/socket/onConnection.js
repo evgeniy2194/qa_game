@@ -4,7 +4,7 @@ import {sendUserInfo, sendQuestsInfo} from '../actions/userActions';
 import sendMessage from './sendMessage';
 import restoreGame from './restoreGame';
 import {getExpToLevel} from "../utils/levelCalculation";
-import {findOrCreate, genereteRandomQuest} from '../utils/userUtils';
+import {findOrCreate, genereteRandomQuest, getActiveQuests} from '../utils/userUtils';
 
 export default function (socket) {
     const query = socket.handshake.query;
