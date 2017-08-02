@@ -1,4 +1,4 @@
-import {GamesStore} from '../utils/store';
+import {GamesStore, UsersStore} from '../utils/store';
 import {answerResult} from '../actions/gameActions';
 import sendMessage from './sendMessage';
 
@@ -9,6 +9,7 @@ export default (socket, data) => {
 
     const answerId = data.answerId;
     const userId = socket.userId;
+    const user = UsersStore.get(userId);
 
     //Если такой игры нет - ничего не делаем
     if (!game) return null;
@@ -36,7 +37,7 @@ export default (socket, data) => {
         });
 
         //Сохраняем ответ пользователя в базу
-        game.game.setAnswers([answerId], {
+        game.model.setAnswers([answerId], {
             through: {
                 userId: userId,
                 questionId: currentQuestionId,
@@ -44,6 +45,6 @@ export default (socket, data) => {
             }
         });
 
-        sendMessage(socket, answerResult(answerId, isCorrectAnswer));
+        sendMessage(user, answerResult(answerId, isCorrectAnswer));
     }
 }

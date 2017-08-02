@@ -1,5 +1,5 @@
 class GameCreator {
-    players = [];
+    users = [];
     queue;
     startGame;
     config;
@@ -15,21 +15,21 @@ class GameCreator {
 
         setInterval(function () {
             if (self.queue.size() >= self.config.game.playersCount) {
-                self.getPlayers();
+                self.getUsers();
             }
         }, 1000);
     }
 
-    getPlayers() {
+    getUsers() {
         let self = this;
-        let allPlayers = self.queue.getAll();
+        let allUsers = self.queue.getAll();
 
-        for (let playerId in allPlayers) {
-            self.players.push(allPlayers[playerId]);
+        for (let userId in allUsers) {
+            self.users.push(allUsers[userId]);
         }
 
-        if (self.players.length === self.config.game.playersCount) {
-            self.startGame(self.players, self.config.game);
+        if (self.users.length === self.config.game.playersCount) {
+            self.startGame(self.users, self.config.game);
             self.removeFromQueue();
         }
     }
@@ -37,11 +37,11 @@ class GameCreator {
     removeFromQueue() {
         let self = this;
 
-        self.players.forEach(player => {
-            self.queue.remove(player.id);
+        self.users.forEach(user => {
+            self.queue.remove(user.id);
         });
 
-        self.players = [];
+        self.users = [];
     }
 }
 

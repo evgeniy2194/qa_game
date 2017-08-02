@@ -1,9 +1,7 @@
-export default function (sockets, message) {
-    if (sockets instanceof Array) {
-        sockets.forEach((socket) => {
-            socket.emit('message', message);
-        });
-    } else {
-        sockets.emit('message', message);
-    }
+export default function (users, message) {
+    users = users instanceof Array ? users : [users];
+
+    users.forEach((user) => {
+        user.socket.emit('message', message);
+    });
 }

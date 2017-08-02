@@ -7,7 +7,7 @@ import {startGame, sendQuestion, gameResult, sendHintsCost} from '../actions/gam
 import {getExpToLevel, getLevelByExp} from '../utils/levelCalculation';
 import {refreshQuests} from '../utils/userUtils';
 
-export default function (players, gameConfig) {
+export default function (users, gameConfig) {
 
     const totalQuestion = gameConfig.totalQuestion;    //Колл-во вопросов в игре
     const roundTime = gameConfig.roundTime;            //Время одного раунда
@@ -32,9 +32,8 @@ export default function (players, gameConfig) {
         })
     });
 
-    players.forEach((player) => {
-        playerModels.push(UsersStore.get(player.userId));
-        usersAnswers.set(player.userId, {
+    users.forEach((user) => {
+        usersAnswers.set(user.id, {
             correctAnswers: 0,
             points: 0,
             answers: new Map
@@ -42,7 +41,8 @@ export default function (players, gameConfig) {
     });
 
     //Сохраняем игру в базу
-    Game.create().then(game => {
+    Game.create().then(gameModel => {
+        const gameId = gameModel.id;
 
         // game.users = game.users.map(user =>{
         //
@@ -53,37 +53,42 @@ export default function (players, gameConfig) {
         // });
 
         let currentGame = {
-            game: game,
+            id: gameId,
+            model: gameModel,
+            users: users,
             currentQuestion: '',
             questions: questions,
-            players: players,
             usersAnswers: usersAnswers
         };
 
         //Добавляем игру в список активных
-        GamesStore.add(game.id, currentGame);
+        GamesStore.add(gameId, currentGame);
 
         //Сохраняем инфу о вопросах и игроках
-        game.setUsers(playerModels);
-        game.setQuestions(questions);
+        let playerModels = users.map((user => {
+            return user.model;
+        }));
+        gameModel.setUsers(playerModels);
+        gameModel.setQuestions(questions);
 
         //Изначальная стоимость подсказок
-        sendMessage(players, sendHintsCost(hintsCost));
+        sendMessage(users, sendHintsCost(hintsCost));
 
         //Игра началась
-        sendMessage(players, startGame(game.id, game.users));
+        sendMessage(users, startGame(gameId, playerModels));
 
         //Отправляем новые вопросы по таймауту
         let interval = setDeceleratingTimeout(() => {
-            players = currentGame.players;
+            let users = currentGame.users;
 
-            if (players.length === 0) {
-                GamesStore.remove(game.id);
+            //Заканчиваем игру если все игроки вышли
+            if (users.length === 0) {
+                GamesStore.remove(gameId);
                 clearInterval(interval);
 
                 //Игра закончилась
-                game.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
-                game.save();
+                gameModel.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+                gameModel.save();
                 return;
             }
 
@@ -111,6 +116,7 @@ export default function (players, gameConfig) {
 
                 usersAnswers.forEach((answer, userId) => {
                     let user = UsersStore.get(userId);
+                    let userModel = user.model;
                     let correctAnswers = answer.correctAnswers;
                     let points = answer.points;
 
@@ -128,41 +134,41 @@ export default function (players, gameConfig) {
                         coins: coins,
                         exp: exp,
                         gems: gems,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
+                        firstName: userModel.firstName,
+                        lastName: userModel.lastName,
                         userId: userId
                     });
 
-                    user.coins += coins;
-                    user.expTotal += exp;
-                    user.gems += gems;
+                    userModel.coins += coins;
+                    userModel.expTotal += exp;
+                    userModel.gems += gems;
 
-                    const userLevel = getLevelByExp(user.expTotal);
+                    const userLevel = getLevelByExp(userModel.expTotal);
 
-                    user.level = userLevel;
-                    user.expToLevel = getExpToLevel(userLevel + 1);
+                    userModel.level = userLevel;
+                    userModel.expToLevel = getExpToLevel(userLevel + 1);
 
-                    user.save().then(() => {
-                        players.forEach(player => {
-                            if (player.userId === userId) {
+                    userModel.save().then(() => {
+                        users.forEach(player => {
+                            if (player.id === userId) {
                                 //Обновляем юзера
-                                sendMessage(player, sendUserInfo(user));
+                                sendMessage(user, sendUserInfo(userModel));
                                 //Пересчитываем квесты
-                                refreshQuests(user, player);
+                                refreshQuests(user);
                             }
                         });
                     });
 
                     //Удаляем игру из списка игр
-                    GamesStore.remove(game.id);
+                    GamesStore.remove(gameId);
 
                     //Игра закончилась
-                    game.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
-                    game.save();
+                    gameModel.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+                    gameModel.save();
                 });
 
                 //Отправляем всем ирокам результаты игры
-                sendMessage(players, gameResult(gameRewards));
+                sendMessage(users, gameResult(gameRewards));
 
             } else {
                 let question = questions[questionNumber];
@@ -176,7 +182,7 @@ export default function (players, gameConfig) {
                 currentGame.currentQuestion.totalQuestion = questions.length;
                 currentGame.currentQuestion.questionNumber = questionNumber;
 
-                currentGame.players = currentGame.players.map(user => {
+                currentGame.users = currentGame.users.map(user => {
 
                     Object.keys(HintsStore.getAll()).map(hintName => {
                         user.roundHintsUsed = user.roundHintsUsed || {};
@@ -184,7 +190,7 @@ export default function (players, gameConfig) {
                     });
                     return user;
                 });
-                sendMessage(players, sendQuestion(currentGame.currentQuestion));
+                sendMessage(users, sendQuestion(currentGame.currentQuestion));
             }
 
         }, roundTime, questions.length + 1);

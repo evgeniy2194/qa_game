@@ -22,9 +22,16 @@ export default function (socket) {
         firstName: query.firstName,
         lastName: query.lastName,
         expToLevel: getExpToLevel(2)
-    }).then(user => {
-        //ToDo: Записывать в Store обьект пользователя содержащий информацию о квестах, подсказках и т.д
-        const userId = user.id;
+    }).then(model => {
+        const userId = model.id;
+        const quests = model.quests;
+
+        let user = {
+            id: model.id,
+            model: model,
+            socket: socket,
+            quests: model.quests,
+        };
 
         socket.userId = userId;
 
@@ -32,23 +39,21 @@ export default function (socket) {
         UsersStore.add(userId, user);
 
         //Отправляем клиенту данные о пользователе
-        sendMessage(socket, sendUserInfo(user));
-
-        const quests = user.quests;
+        sendMessage(user, sendUserInfo(model));
 
         //Если нет квестов
         if (quests.length === 0) {
             //Если нет квестов - генерируем случайный квест
-            genereteRandomQuest(user).then(() => {
+            genereteRandomQuest(model).then(() => {
                 //Получаем активные квесты
-                return getActiveQuests(user);
+                return getActiveQuests(model);
             }).then(quests => {
                 //Отправляем данные о квестах
-                sendMessage(socket, sendQuestsInfo(quests));
+                sendMessage(user, sendQuestsInfo(quests));
             })
         } else {
             //Отправляем данные о квестах
-            sendMessage(socket, sendQuestsInfo(quests));
+            sendMessage(user, sendQuestsInfo(quests));
         }
 
         //ToDo: Проверять активную игру в обьекте пользователя в Store

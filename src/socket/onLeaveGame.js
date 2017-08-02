@@ -10,24 +10,23 @@ export default (socket) => {
     let game = GamesStore.get(user.currentGameId);
 
     //Если такой игры нет - ничего не делаем
-
     if (!game) return null;
 
-    game.players = game.players.filter(player =>{
-        if(player.userId != socket.userId){
+    game.players = game.players.filter(player => {
+        if (player.userId !== socket.userId) {
             return player;
         }
-    })
+    });
 
-    game.game.users = game.game.users.filter(player =>{
+    game.game.users = game.game.users.filter(player => {
 
-        if(player._id != socket.userId){
+        if (player._id !== socket.userId) {
             return player;
         }
-    })
+    });
 
     user.currentGameId = null;
 
-    user.save();
+    user.model.save();
     game.game.save();
 }

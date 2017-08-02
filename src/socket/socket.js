@@ -21,7 +21,9 @@ export function createSocket(server) {
                 //Поиск игры
                 case 'FIND_GAME':
                     //Добавляем игрока в очередь
-                    QueueStore.add(socket.id, socket);
+                    const user = UsersStore.get(socket.userId);
+
+                    QueueStore.add(user.id, user);
                     break;
 
                 //Ответ на вопрос

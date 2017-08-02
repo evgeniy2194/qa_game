@@ -102,10 +102,11 @@ export function getActiveQuests(user) {
  * Refreshes user quests and sends info about it
  *
  * @param user
- * @param socket
  */
-export function refreshQuests(user, socket) {
-    let quests = user.quests;
+export function refreshQuests(user) {
+    let userModel = user.model;
+    let socket = user.socket;
+    let quests = userModel.quests;
 
     quests.forEach(quest => {
         let check = quest.check;
