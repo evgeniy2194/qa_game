@@ -19,6 +19,7 @@ export default function (players, gameConfig) {
     let usersAnswers = new Map;
     let hints = HintsStore.getAll();
     let hintsCost = {};
+    let users = [];
 
     for (let hintName in hints) {
         hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, 0);
@@ -33,8 +34,12 @@ export default function (players, gameConfig) {
     });
 
     players.forEach((player) => {
-        playerModels.push(UsersStore.get(player.userId));
-        usersAnswers.set(player.userId, {
+        let userId = player.userId;
+
+        users.push( { userId : userId } );
+
+        playerModels.push(UsersStore.get(userId));
+        usersAnswers.set(userId, {
             correctAnswers: 0,
             points: 0,
             answers: new Map
@@ -44,21 +49,25 @@ export default function (players, gameConfig) {
     //Сохраняем игру в базу
     Game.create().then(game => {
 
-        // game.users = game.users.map(user =>{
-        //
-        //     Object.keys(HintsStore.getAll()).map(hintName =>{
-        //         user.hintsUsedCounter[hintName] = 0;
-        //     });
-        //     return user;
-        // });
+
 
         let currentGame = {
             game: game,
             currentQuestion: '',
             questions: questions,
             players: players,
-            usersAnswers: usersAnswers
+            usersAnswers: usersAnswers,
+            users: users
         };
+
+
+        currentGame.users = currentGame.users.map(user =>{
+            user.hintsUsedCounter = {};
+            Object.keys(HintsStore.getAll()).map(hintName =>{
+                user.hintsUsedCounter[hintName] = 0;
+            });
+            return user;
+        });
 
         //Добавляем игру в список активных
         GamesStore.add(game.id, currentGame);
@@ -174,7 +183,7 @@ export default function (players, gameConfig) {
                 currentGame.currentQuestion.totalQuestion = questions.length;
                 currentGame.currentQuestion.questionNumber = questionNumber;
 
-                currentGame.players = currentGame.players.map(user => {
+                currentGame.users = currentGame.users.map(user => {
 
                     Object.keys(HintsStore.getAll()).map(hintName => {
                         user.roundHintsUsed = user.roundHintsUsed || {};
@@ -182,6 +191,7 @@ export default function (players, gameConfig) {
                     });
                     return user;
                 });
+
                 sendMessage(players, sendQuestion(currentGame.currentQuestion));
             }
 

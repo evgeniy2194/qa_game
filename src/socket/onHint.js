@@ -20,8 +20,12 @@ export default (socket, data) => {
     let newHintsCost = {};
     let hintName = data.hint;
 
-    game.players = game.players.map(user => {
-        if (user.id === userId) {
+
+    game.users = game.users.map(user => {
+
+
+        if (user.userId === userId) {
+
             if (!user.roundHintsUsed[hintName]) {
                 user.roundHintsUsed[hintName] = true;
                 hintsCost = CalculateHints(user);
@@ -30,24 +34,28 @@ export default (socket, data) => {
                     noHintsLeft = true; // means that there are no hints left for the user
                 } else {
                     // reduce coins/gems
-                    let userFromStore = UsersStore.get(user.id);
+                    let userFromStore = UsersStore.get(user.userId);
 
-                    userFromStore.gems -= hintsCost[hintName].gems;
-                    userFromStore.coins -= hintsCost[hintName].coins;
+                    //userFromStore.gems -= hintsCost[hintName].gems;
+                    //userFromStore.coins -= hintsCost[hintName].coins;
                     userFromStore.save();
-                    sendMessage(socket, sendUserInfo(userFromStore));
-
+                    //sendMessage(socket, sendUserInfo(userFromStore));
                     user.hintsUsedCounter[hintName]++;
-                    newHintsCost = CalculateHints(user);
                 }
             } else {
                 alreadyUsed = true;
             }
+            newHintsCost = CalculateHints(user);
         }
 
         return user;
     });
-
+    if (newHintsCost[data.hint]) {
+        sendMessage(socket, sendHintsCost(newHintsCost));
+    } else {
+        sendMessage(socket, sendHintsCost({'NoMoreHintsLeft': true}));
+    }
+    console.log(newHintsCost);
     switch (data.hint) {
         case HINT_50:
 
@@ -63,19 +71,16 @@ export default (socket, data) => {
                 });
             }
 
-            if (newHintsCost[HINT_50]) {
-                sendMessage(socket, sendHintsCost(newHintsCost));
-            } else {
-                sendMessage(socket, sendHintsCost({'NoMoreHintsLeft': true}));
-            }
+
 
             if (!noHintsLeft) {
                 sendMessage(socket, sendWrongAnswers({wrongAnswers: wrongAnswers}));
             }
-
             break;
         case VERY_EXPENSIVE:
+
         default:
             break;
     }
+
 }

@@ -58,39 +58,25 @@ class QuestionsStoreClass extends StoreClass {
 }
 
 class HintsStoreClass extends StoreClass{
-    defaultCosts = {
-        'hint50': {
-            'costs': [
-                {'coins': 100, 'gems': 0},
-                {'coins': 110, 'gems': 2},
-                {'coins': 120, 'gems': 4},
-                {'coins': 130, 'gems': 8}
-            ]
-        },
-        'veryExpensive': {
-            'costs': [
-                {'coins': 100, 'gems': 100},
-                {'coins': 110, 'gems': 200},
-                {'coins': 120, 'gems': 400},
-                {'coins': 130, 'gems': 800}
-            ]
-        }
-    };
 
+
+    addCost(key, value){
+
+        this.store[key]['costs'].push(value);
+    }
     getAll(){
-
-        return this.defaultCosts;
 
         return super.getAll();
     }
 
     get(key){
-        return this.defaultCosts[key];
+
+
         return super.get(key);
     }
 
     getCostByNameAndCount(key, count){
-        return this.defaultCosts[key]['costs'][count];
+        return this.store[key]['costs'][count];
     }
 
 }

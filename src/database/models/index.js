@@ -7,6 +7,7 @@ import Quest from './quest';
 import UserQuest from './userQuest';
 import Hints from './hints';
 import HintsUsing from './hintsUsing';
+import GemsAndCoinsUsing from './gemsAndCoinsUsing'
 import HintCosts from './hintCosts';
 
 
@@ -31,7 +32,7 @@ UserQuest.belongsTo(User, {as: 'user'});
 Hints.hasMany(HintCosts, {as: 'costs'});
 
 
-export {Game, User, Question, QuestionAnswer, Quest, UserQuest, Hints, HintCosts};
+export {Game, User, Question, QuestionAnswer, Quest, UserQuest, Hints, HintCosts, GemsAndCoinsUsing};
 
 /**
  INSERT into Questions (question) VALUES
@@ -63,7 +64,7 @@ export {Game, User, Question, QuestionAnswer, Quest, UserQuest, Hints, HintCosts
  (5, "Сыграть 5 игр", "SELECT count(*) FROM GameUsers WHERE userId = :userId", 1, "gems"),
  (1, "Ответить верно на 1 вопрос", "SELECT count(*) FROM GameAnswers WHERE userId = :userId AND isCorrect = true", 2, "gems");
 
- insert into Hints (name) values ('50hint'), ('VeryExpensive');
+ insert into Hints (name) values ('hint50'), ('VeryExpensive');
 
  insert into HintCosts (hintId, countOfUse, coins, gems) values
  (1, 0, 100, 0),
