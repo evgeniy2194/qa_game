@@ -2,17 +2,13 @@ import checkAuthKey from '../utils/chekAuthKey';
 import {UsersStore, GamesStore} from '../utils/store';
 import {sendUserInfo, sendQuestsInfo} from '../actions/userActions';
 import sendMessage from './sendMessage';
-import {User, Quest, UserQuest} from '../database/models';
 import restoreGame from './restoreGame';
 import {getExpToLevel} from "../utils/levelCalculation";
-import connect from '../database/connect';
-import Sequelize from 'sequelize';
-import moment from 'moment';
+import {findOrCreate, genereteRandomQuest} from '../utils/userUtils';
 
 export default function (socket) {
-
-    let query = socket.handshake.query;
-    let uid = query.uid;
+    const query = socket.handshake.query;
+    const uid = query.uid;
 
     //Проверяем авторизирован ли пользователь
     if (!checkAuthKey(uid, query.authKey) && process.env.NODE_ENV === 'production') {
@@ -21,18 +17,13 @@ export default function (socket) {
     }
 
     //Ищем или создаем пользователя
-    User.findOrCreate({
-        where: {
-            uid: uid
-        },
-        defaults: {
-            uid: uid,
-            firstName: query.firstName,
-            lastName: query.lastName,
-            expToLevel: getExpToLevel(2)
-        }
-    }).then((data, created) => {
-        const user = data[0];
+    findOrCreate({
+        uid: uid,
+        firstName: query.firstName,
+        lastName: query.lastName,
+        expToLevel: getExpToLevel(2)
+    }).then(user => {
+        //ToDo: Записывать в Store обьект пользователя содержащий информацию о квестах, подсказках и т.д
         const userId = user.id;
 
         socket.userId = userId;
@@ -43,56 +34,24 @@ export default function (socket) {
         //Отправляем клиенту данные о пользователе
         sendMessage(socket, sendUserInfo(user));
 
-        //ToDo: Move to enother file
-        //ToDO: send to user quest info
-        user.getQuests({
-            through: {
-                model: UserQuest,
-                where: {
-                    isReceivedReward: false,
-                    dateFrom: {
-                        $lt: moment().format('YYYY-MM-DD HH:mm:ss')
-                    },
-                    dateTill: {
-                        $gt: moment().format('YYYY-MM-DD HH:mm:ss')
-                    }
-                }
-            }
-        }).then(response => {
+        const quests = user.quests;
+
+        //Если нет квестов
+        if (quests.length === 0) {
             //Если нет квестов - генерируем случайный квест
-            if (response.length === 0) {
-                return Quest.findOne({order: [Sequelize.fn('RAND')]});
-            } else {
-                sendMessage(socket, sendQuestsInfo(response, 0));
-            }
-
-            return null;
-        }).then(quest => {
-            if (quest) {
-                sendMessage(socket, sendQuestsInfo(quest, 0));
-                return user.addQuest(quest, {
-                    through: {
-                        progress: 0,
-                        isDone: false,
-                        isReceivedReward: false,
-                        dateFrom: moment().format('YYYY-MM-DD HH:mm:ss'),
-                        dateTill: moment().add(12, 'hours').format('YYYY-MM-DD HH:mm:ss')
-                    }
-                });
-            }
-        }).then((data) => {
-//
-        });
-
-        //Если игрок не новый и у него есть незаконченная игра
-        if (!created) {
-            const sql = "SELECT g.* FROM Games g INNER JOIN GameUsers p ON p.gameId = g.id WHERE g.finishedAt IS NULL LIMIT 1";
-            connect.query(sql, {type: Sequelize.QueryTypes.SELECT}).then((response) => {
-                const game = response[0];
-                if (game) {
-                    restoreGame(socket, GamesStore.get(game.id));
-                }
+            genereteRandomQuest(user).then(() => {
+                //Получаем активные квесты
+                return getActiveQuests(user);
+            }).then(quests => {
+                //Отправляем данные о квестах
+                sendMessage(socket, sendQuestsInfo(quests));
             })
+        } else {
+            //Отправляем данные о квестах
+            sendMessage(socket, sendQuestsInfo(quests));
         }
+
+        //ToDo: Проверять активную игру в обьекте пользователя в Store
+        //restoreGame(socket, GamesStore.get(game.id));
     });
 }
