@@ -47,9 +47,7 @@ export default function (socket) {
         });
 
         if (user.gameId) {
-            console.log('here');
             restoreGame(user, GamesStore.get(user.gameId));
-            console.log('here2');
         }
     });
 }
