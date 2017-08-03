@@ -2,7 +2,14 @@ import React, {Component} from 'react';
 import VK from '../libs/vk';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
-import {onFindGameClick, onCancelFindGameClick, onAnswerQuestionClick, onHintClick, onLeaveGameClick} from '../actions/gameActions';
+import {
+    onFindGameClick,
+    onCancelFindGameClick,
+    onAnswerQuestionClick,
+    onHintClick,
+    onLeaveGameClick,
+    getQuestReward
+} from '../actions/gameActions';
 import Preload from './preload';
 import CoinsArea from './coinsArea';
 import LevelArea from './levelArea';
@@ -15,23 +22,22 @@ import {exitFullscreen, toggleFullscreen} from "../utils/fullscreen";
 
 class App extends Component {
 
-    showInviteBox() {
+    static showInviteBox() {
         exitFullscreen();
         VK.callMethod("showInviteBox");
     }
 
-    onFullScreenClick() {
+    static onFullScreenClick() {
         toggleFullscreen();
     }
 
     render() {
         const props = this.props;
-        let tpl;
 
-        if (!this.props.user.id) {
-            tpl = ( <Preload /> );
-        } else {
-            tpl = (
+        return <div>
+            {!this.props.user.id ? (
+                <Preload />
+            ) : (
                 <div>
                     <Game game={ props.game }
                           user={ props.user }
@@ -42,16 +48,14 @@ class App extends Component {
                           onLeaveGameClick={props.onLeaveGameClick}
                     />
                     <LevelArea user={ props.user }/>
-                    <QuestsArea quests={ props.user.quests}/>
-                    <SettingsArea onFullScreenClick={this.onFullScreenClick}/>
+                    <QuestsArea quests={ props.user.quests} getQuestReward={props.getQuestReward}/>
+                    <SettingsArea onFullScreenClick={App.onFullScreenClick}/>
                     <CoinsArea coins={ props.user.coins } gems={ props.user.gems }/>
                     <RatingArea />
-                    <FriendsList friends={this.props.user.friends} showIniteBox={this.showInviteBox}/>
+                    <FriendsList friends={this.props.user.friends} showIniteBox={App.showInviteBox}/>
                 </div>
-            );
-        }
-
-        return tpl;
+            )}
+        </div>
     }
 }
 
@@ -64,7 +68,14 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({onFindGameClick, onCancelFindGameClick, onAnswerQuestionClick, onHintClick, onLeaveGameClick}, dispatch);
+    return bindActionCreators({
+        onFindGameClick,
+        onCancelFindGameClick,
+        onAnswerQuestionClick,
+        onHintClick,
+        onLeaveGameClick,
+        getQuestReward
+    }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

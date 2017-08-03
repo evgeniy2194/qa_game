@@ -2,7 +2,8 @@ export const CANCEL_FIND_GAME = 'CANCEL_FIND_GAME';
 export const START_GAME = 'START_GAME';
 export const ANSWER_GAME = 'ANSWER_GAME';
 export const USE_HINT = 'USE_HINT';
-export const LEAVE_GAME ='LEAVE_GAME';
+export const LEAVE_GAME = 'LEAVE_GAME';
+export const GET_QUEST_REWARD = 'GET_QUEST_REWARD';
 
 import {FIND_GAME} from "../constants/game";
 
@@ -61,6 +62,19 @@ export function onHintClick(data) {
                 questionId: data.questionId,
                 hint: data.hint,
                 userId: data.userId
+            }
+        }
+    }
+}
+
+export function getQuestReward(userQuestId) {
+    return {
+        type: GET_QUEST_REWARD,
+        data: {},
+        socket: {
+            action: GET_QUEST_REWARD,
+            data: {
+                userQuestId: userQuestId
             }
         }
     }

@@ -1,22 +1,14 @@
 import React, {Component} from 'react';
+import Quest from './quest';
 
 export default class QuestsArea extends Component {
 
     render() {
-        const quests = this.props.quests;
-
         return <div id="quests-area">
             Задания:
-            {quests.map(
-                (quest) => {
-                    return ( <div key={quest.id}>
-                            {quest.description} {quest.progress}/{quest.requirements} <br/>
-                            Награда: {quest.rewardCount} {quest.rewardType} <br/>
-                            {quest.isDone ? 'Выполнен' : ''}
-                        </div>
-                    );
-                }
-            )}
+            { this.props.quests.map(quest => {
+                return <Quest quest={quest} getQuestReward={this.props.getQuestReward}/>
+            })}
         </div>
     }
 }
