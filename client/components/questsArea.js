@@ -7,7 +7,7 @@ export default class QuestsArea extends Component {
         return <div id="quests-area">
             Задания:
             { this.props.quests.map(quest => {
-                return <Quest quest={quest} getQuestReward={this.props.getQuestReward}/>
+                return <Quest quest={quest} getQuestReward={this.props.getQuestReward.bind(this, quest.userQuestId)}/>
             })}
         </div>
     }

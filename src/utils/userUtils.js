@@ -119,7 +119,7 @@ export function refreshQuests(user) {
             promises.push(
                 connect.query(check, {replacements: {userId: user.id}}).spread(results => {
                     userQuest.progress = (results[0] && results[0].progress) || 0;
-                    userQuest.isDone = quest.requirements < userQuest.progress;
+                    userQuest.isDone = userQuest.progress >= quest.requirements;
 
                     return userQuest.save();
                 })
