@@ -106,8 +106,7 @@ export function getActiveQuests(user) {
  * @param user
  */
 export function refreshQuests(user) {
-    let userModel = user.model;
-    let quests = userModel.quests;
+    const quests = user.quests;
 
     quests.forEach(quest => {
         let check = quest.check;
@@ -117,7 +116,13 @@ export function refreshQuests(user) {
         //Array of Promises
         if (!userQuest.isDone) {
             promises.push(
-                connect.query(check, {replacements: {userId: user.id}}).spread(results => {
+                connect.query(check, {
+                    replacements: {
+                        userId: user.id,
+                        dateStart: userQuest.dateFrom,
+                        dateTill: userQuest.dateTill
+                    }
+                }).spread(results => {
                     userQuest.progress = (results[0] && results[0].progress) || 0;
                     userQuest.isDone = userQuest.progress >= quest.requirements;
 
