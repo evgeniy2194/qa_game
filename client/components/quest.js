@@ -13,10 +13,8 @@ export default class Quest extends Component {
                 <label>Награда:</label>
                 {quest.rewardCount} {quest.rewardType}
             </div>
-            <div>
-                {quest.isDone ? 'Выполнен' : ''}
-                {quest.isDone && !quest.isReceivedReward ? getRewardBtn : ''}
-            </div>
+            <div>{quest.isDone ? 'Выполнен' : ''}</div>
+            <div>{quest.isDone && !quest.isReceivedReward ? getRewardBtn : ''}</div>
         </div>
     }
 }

@@ -14,6 +14,12 @@ export default class CoinsArea extends Component {
                      src="https://cdn3.iconfinder.com/data/icons/gems/128/diamond_sapphire-2-128.png"/>
                 { this.props.gems }
             </span>
+            <div>
+                <input style={{width: '60px'}} type="number"/>
+            </div>
+            <div>
+                <button>Купить</button>
+            </div>
         </div>
     }
 }
