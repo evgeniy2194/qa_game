@@ -36,7 +36,7 @@ export default (user, data) => {
         });
 
         //Сохраняем ответ пользователя в базу
-        game.model.setAnswers([answerId], {
+        game.model.addAnswer(answerId, {
             through: {
                 userId: userId,
                 questionId: currentQuestionId,

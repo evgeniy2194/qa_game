@@ -117,21 +117,30 @@ export function getActiveQuests(user) {
  * @param user
  * @param socket
  */
-export function refreshQuests(user, socket) {
-    let quests = user.quests;
+export function refreshQuests(user) {
+    const quests = user.quests;
 
     quests.forEach(quest => {
         let check = quest.check;
         let promises = [];
 
         //Array of Promises
-        promises.push(
-            connect.query(check, {replacements: {userId: user.id}}).spread(results => {
-                quest.UserQuest.progress = (results[0] && results[0].progress) || 0;
+        if (!userQuest.isDone) {
+            promises.push(
+                connect.query(check, {
+                    replacements: {
+                        userId: user.id,
+                        dateStart: userQuest.dateFrom,
+                        dateTill: userQuest.dateTill
+                    }
+                }).spread(results => {
+                    userQuest.progress = (results[0] && results[0].progress) || 0;
+                    userQuest.isDone = userQuest.progress >= quest.requirements;
 
-                return quest.UserQuest.save();
-            })
-        );
+                    return userQuest.save();
+                })
+            );
+        }
 
         //Waits for complete all promises and sends info
         Promise.all(promises).then(() => {

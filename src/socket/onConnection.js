@@ -43,6 +43,7 @@ export default function (socket) {
 
         //Отправка данных о квестах
         Promise.resolve(quests.length ? quests : genereteRandomQuest(user.model)).then(quests => {
+            user.quests = quests;
             sendMessage(user, sendQuestsInfo(quests));
         });
 

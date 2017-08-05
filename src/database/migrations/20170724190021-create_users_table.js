@@ -20,6 +20,10 @@ module.exports = {
                 type: Sequelize.STRING,
                 defaultValue: null,
             },
+            level: {
+                type: Sequelize.INTEGER.UNSIGNED,
+                defaultValue: 1,
+            },
             expTotal: {
                 type: Sequelize.INTEGER.UNSIGNED,
                 defaultValue: 0,

@@ -24,22 +24,19 @@ export default function (state = {}, action) {
             return {...state, ...action.data};
         case "WRONG_ANSWERS":
 
-            store = {answers : []};
+            store = {answers: []};
             store.answers = state.answers.map(answer => {
+                answer.isWrong = action.data.wrongAnswers.indexOf(answer.id) !== -1;
 
-                if(action.data.wrongAnswers.indexOf(answer.id) === -1){
-                    answer.isWrong = false;
-                }else{
-                    answer.isWrong = true;
-                }
                 return answer;
             });
             store.is50HintUsed = true;
+
             return {...state, ...store};
 
         case "HINTS_COST":
-            store = { hintsCosts: action.data };
-            return {...state, ...store };
+            store = {hintsCosts: action.data};
+            return {...state, ...store};
 
         case "GAME_RESULT":
             //Обнуляем игру

@@ -27,6 +27,7 @@
 
 #coins-area,
 #rating-area,
+#quests-area,
 #level-area {
     position: fixed;
     padding: 10px;
@@ -36,7 +37,12 @@
 
 #level-area {
     top: 0;
-    left: 0px;
+    left: 0;
+}
+
+#quests-area {
+    top: 100px;
+    left: 0;
 }
 
 #coins-area {

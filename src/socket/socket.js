@@ -2,7 +2,8 @@ import socketio from 'socket.io';
 import onConnection from './onConnection';
 import onAnswer from './onAnswer';
 import onHint from './onHint';
-import onLeaveGame from './onLeaveGame'
+import onLeaveGame from './onLeaveGame';
+import getQuestReward from './getQuestReward';
 import {QueueStore, UsersStore} from '../utils/store';
 
 let io = null;
@@ -41,6 +42,11 @@ export function createSocket(server) {
                 case 'USE_HINT':
                     onHint(user, data.data);
                     break;
+
+                case 'GET_QUEST_REWARD':
+                    getQuestReward(user, data.data);
+                    break;
+
                 case 'LEAVE_GAME':
                     onLeaveGame(user);
                     break;
