@@ -10,19 +10,32 @@ import sendMessage from '../socket/sendMessage';
 import {sendQuestsInfo} from '../actions/userActions';
 
 export function decreaseGems(user, amount) {
-
+    amount = -amount;
+    _changeGemsAmount(user, amount);
 }
 
 export function increaseGems(user, amount) {
-
+    _changeGemsAmount(user, amount);
 }
 
 export function decreaseCoins(user, amount) {
-
+    amount = -amount;
+    _changeCoinsAmount(user, amount);
 }
 
 export function increaseCoins(user, amount) {
+    _changeCoinsAmount(user, amount);
+}
 
+
+function _changeGemsAmount(user, amount) {
+    user.gems+= amount;
+    user.save();
+}
+
+function _changeCoinsAmount(user, amount) {
+    user.coins+= amount;
+    user.save();
 }
 
 /**
@@ -127,11 +140,12 @@ export function refreshQuests(user, socket) {
     });
 }
 
-
-function _changeGemsAmount() {
-
+export function getExpToLevel(lvl) {
+    return 100 * Math.pow(lvl - 1, 2);
 }
 
-function _changeCoinsAmount() {
-
+export function getLevelByExp(exp) {
+    return Math.ceil(Math.sqrt(exp / 100));
 }
+
+

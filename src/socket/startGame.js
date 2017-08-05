@@ -4,10 +4,10 @@ import {GamesStore, UsersStore, QuestionsStore, HintsStore} from '../utils/store
 import sendMessage from './sendMessage';
 import {sendUserInfo} from '../actions/userActions';
 import {startGame, sendQuestion, gameResult, sendHintsCost} from '../actions/gameActions';
-import {getExpToLevel, getLevelByExp} from '../utils/levelCalculation';
+import {getExpToLevel, getLevelByExp} from '../utils/userUtils';
 import {refreshQuests} from '../utils/userUtils';
 
-export default function (players, gameConfig) {
+export default function (users, gameConfig) {
 
     const totalQuestion = gameConfig.totalQuestion;    //Колл-во вопросов в игре
     const roundTime = gameConfig.roundTime;            //Время одного раунда
@@ -15,11 +15,9 @@ export default function (players, gameConfig) {
     //Ищем totalQuestion рандомных вопросы
     let questions = QuestionsStore.getRandom(totalQuestion);
     let questionNumber = 0;     //Номер вопроса
-    let playerModels = [];
     let usersAnswers = new Map;
     let hints = HintsStore.getAll();
     let hintsCost = {};
-    let users = [];
 
     for (let hintName in hints) {
         hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, 0);
@@ -33,68 +31,70 @@ export default function (players, gameConfig) {
         })
     });
 
-    players.forEach((player) => {
-        let userId = player.userId;
-
-        users.push( { userId : userId } );
-
-        playerModels.push(UsersStore.get(userId));
-        usersAnswers.set(userId, {
-            correctAnswers: 0,
-            points: 0,
-            answers: new Map
-        });
-    });
 
     //Сохраняем игру в базу
-    Game.create().then(game => {
+    Game.create().then(gameModel => {
+        const gameId = gameModel.id;
+
+        users.forEach((user) => {
+            user.gameId = gameId;
+            usersAnswers.set(user.id, {
+                correctAnswers: 0,
+                points: 0,
+                answers: new Map
+            });
+        });
 
 
 
         let currentGame = {
-            game: game,
+            id: gameId,
+            model: gameModel,
+            users: users,
             currentQuestion: '',
             questions: questions,
-            players: players,
-            usersAnswers: usersAnswers,
-            users: users
+            usersAnswers: usersAnswers
         };
 
 
         currentGame.users = currentGame.users.map(user =>{
-            user.hintsUsedCounter = {};
+            user.hints.hintsUsedCounter = {};
             Object.keys(HintsStore.getAll()).map(hintName =>{
-                user.hintsUsedCounter[hintName] = 0;
+                user.hints.hintsUsedCounter[hintName] = 0;
             });
             return user;
         });
 
         //Добавляем игру в список активных
-        GamesStore.add(game.id, currentGame);
+        GamesStore.add(gameId, currentGame);
 
         //Сохраняем инфу о вопросах и игроках
-        game.setUsers(playerModels);
-        game.setQuestions(questions);
+        let userModels = users.map((user => {
+            return user.model;
+        }));
+        gameModel.setUsers(userModels);
+        gameModel.setQuestions(questions);
 
         //Изначальная стоимость подсказок
-        sendMessage(players, sendHintsCost(hintsCost));
+        sendMessage(users, sendHintsCost(hintsCost));
 
         //Игра началась
-        sendMessage(players, startGame(game.id, game.users));
+        sendMessage(users, startGame(gameId, userModels));
 
         //Отправляем новые вопросы по таймауту
         let interval = setDeceleratingTimeout(() => {
-            players = currentGame.players;
+            let users = currentGame.users;
 
-            if (players.length === 0) {
-                GamesStore.remove(game.id);
-                clearInterval(interval);
-
-                //Игра закончилась
-                game.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
-                game.save();
-                return;
-            }
+            // //Заканчиваем игру если все игроки вышли
+            // if (users.length === 0) {
+            //     GamesStore.remove(gameId);
+            //     clearInterval(interval);
+            //
+            //     //Игра закончилась
+            //     gameModel.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+            //     gameModel.save();
+            //     return;
+            // }
 
             //Если вопросов нет - конец игры
             if (questionNumber === questions.length) {
@@ -120,6 +120,7 @@ export default function (players, gameConfig) {
 
                 usersAnswers.forEach((answer, userId) => {
                     let user = UsersStore.get(userId);
+                    let userModel = user.model;
                     let correctAnswers = answer.correctAnswers;
                     let points = answer.points;
 
@@ -137,41 +138,41 @@ export default function (players, gameConfig) {
                         coins: coins,
                         exp: exp,
                         gems: gems,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
+                        firstName: userModel.firstName,
+                        lastName: userModel.lastName,
                         userId: userId
                     });
 
-                    user.coins += coins;
-                    user.expTotal += exp;
-                    user.gems += gems;
+                    userModel.coins += coins;
+                    userModel.expTotal += exp;
+                    userModel.gems += gems;
 
-                    const userLevel = getLevelByExp(user.expTotal);
+                    const userLevel = getLevelByExp(userModel.expTotal);
 
-                    user.level = userLevel;
-                    user.expToLevel = getExpToLevel(userLevel + 1);
+                    userModel.level = userLevel;
+                    userModel.expToLevel = getExpToLevel(userLevel + 1);
 
-                    user.save().then(() => {
-                        players.forEach(player => {
-                            if (player.userId === userId) {
+                    userModel.save().then(() => {
+                        users.forEach(player => {
+                            if (player.id === userId) {
                                 //Обновляем юзера
-                                sendMessage(player, sendUserInfo(user));
+                                sendMessage(user, sendUserInfo(userModel));
                                 //Пересчитываем квесты
-                                refreshQuests(user, player);
+                                refreshQuests(user);
                             }
                         });
                     });
 
                     //Удаляем игру из списка игр
-                    GamesStore.remove(game.id);
+                    GamesStore.remove(gameId);
 
                     //Игра закончилась
-                    game.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
-                    game.save();
+                    gameModel.finishedAt = moment().format('YYYY-MM-DD HH:mm:ss');
+                    gameModel.save();
                 });
 
                 //Отправляем всем ирокам результаты игры
-                sendMessage(players, gameResult(gameRewards));
+                sendMessage(users, gameResult(gameRewards));
 
             } else {
                 let question = questions[questionNumber];
@@ -187,14 +188,15 @@ export default function (players, gameConfig) {
 
                 currentGame.users = currentGame.users.map(user => {
 
+                    console.log(HintsStore.getAll());
                     Object.keys(HintsStore.getAll()).map(hintName => {
-                        user.roundHintsUsed = user.roundHintsUsed || {};
-                        user.roundHintsUsed[hintName] = false;
+
+                        user.hints.roundHintsUsed = user.roundHintsUsed || {};
+                        user.hints.roundHintsUsed[hintName] = false;
                     });
                     return user;
                 });
-
-                sendMessage(players, sendQuestion(currentGame.currentQuestion));
+                sendMessage(users, sendQuestion(currentGame.currentQuestion));
             }
 
         }, roundTime, questions.length + 1);
@@ -203,10 +205,9 @@ export default function (players, gameConfig) {
 
 function setDeceleratingTimeout(callback, factor, times) {
 
-    let internalCallback = function (tick, counter) {
+    let internalCallback = function (tick) {
         return function () {
             if (--tick >= 0) {
-
                 setTimeout(internalCallback, factor);
                 callback();
             }

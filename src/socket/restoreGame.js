@@ -2,12 +2,12 @@ import {startGame, sendQuestion, answerResult, sendHintsCost} from '../actions/g
 import sendMessage from './sendMessage';
 import {CalculateHints} from '../utils/HintsCalculator';
 
-export default function (socket, game) {
+export default function (user, game) {
     if (game) {
         const currentQuestion = game.currentQuestion;
-        const userAnswers = game.usersAnswers.get(socket.userId);
-        const currentQuestionId = currentQuestion._id;
-        //const hints = game.hints;
+        const userAnswers = game.usersAnswers.get(user.id);
+        const currentQuestionId = currentQuestion.id;
+        const hints = game.hints;
 
         // let hints = {};
         // game.game.users.map(user =>{
@@ -16,20 +16,23 @@ export default function (socket, game) {
         //         hints =  CalculateHints(user);
         //     }
         // });
-
-        game.players.push(socket);
+        game.users.push(user);
 
         //Отправляем данные об игре
-        sendMessage(socket, startGame(game.game._id, game.users));
+        let userModels = game.users.map(user => {
+            return user.model;
+        });
+        sendMessage(user, startGame(game.model.id, userModels));
 
         //Отправляем игроку текущий вопрос
-        sendMessage(socket, sendQuestion(currentQuestion));
+        sendMessage(user, sendQuestion(currentQuestion));
 
-        sendMessage(socket, sendHintsCost(hints));
+        sendMessage(user, sendHintsCost(hints));
         //Если пользователь уже отвечал на этот вопрос
         if (userAnswers.answers.has(currentQuestionId)) {
             const answer = userAnswers.answers.get(currentQuestionId);
-            sendMessage(socket, answerResult(answer.answerId, answer.isCorrectAnswer));
+
+            sendMessage(user, answerResult(answer.answerId, answer.isCorrectAnswer));
         }
     }
 }

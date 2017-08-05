@@ -26,7 +26,9 @@ export function sendQuestsInfo(data) {
             rewardType: quest.rewardType,
             questId: quest.id,
             id: quest.UserQuest.id,
-            progress: quest.UserQuest.progress
+            progress: quest.UserQuest.progress,
+            isDone: quest.UserQuest.isDone,
+            isReceivedReward: quest.UserQuest.isReceivedReward
         });
     });
 

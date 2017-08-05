@@ -17,30 +17,32 @@ export function createSocket(server) {
 
         //Обработка всех входящих сообщений
         socket.on('message', data => {
+            const user = UsersStore.get(socket.userId);
+
             switch (data.action) {
                 //Поиск игры
                 case 'FIND_GAME':
                     //Добавляем игрока в очередь
-                    QueueStore.add(socket.id, socket);
+                    QueueStore.add(user.id, user);
                     break;
 
                 //Ответ на вопрос
                 case 'ANSWER_GAME':
-                    onAnswer(socket, data.data);
+                    onAnswer(user, data.data);
                     break;
 
                 //Выход с очереди
                 case 'CANCEL_FIND_GAME':
                     //Удаляем из массива игроков в очереди
-                    QueueStore.remove(socket.id);
+                    QueueStore.remove(user.id);
                     break;
 
                 //Использование подсказки
                 case 'USE_HINT':
-                    onHint(socket, data.data);
+                    onHint(user, data.data);
                     break;
                 case 'LEAVE_GAME':
-                    onLeaveGame(socket);
+                    onLeaveGame(user);
                     break;
                 default:
                     break;
@@ -48,10 +50,13 @@ export function createSocket(server) {
         });
 
         socket.on('disconnect', () => {
-            console.log('disconnect');
-            //Удаляем игрока с очереди и со списка игроков
-            QueueStore.remove(socket.id);
-            UsersStore.remove(socket.userId);
+            const user = UsersStore.get(socket.userId);
+
+            if (user) {
+                user.isOnline = false;
+                //Удаляем игрока с очереди
+                QueueStore.remove(user.id);
+            }
         });
     });
 }
