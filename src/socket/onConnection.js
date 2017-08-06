@@ -34,6 +34,7 @@ export default function (socket) {
         user.socket = socket;
         user.quests = model.quests;
         user.isOnline = true;
+        user.exitTime = null;
 
         //Сохраняем пользователя в хранилище
         UsersStore.add(userId, user);

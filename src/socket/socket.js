@@ -1,4 +1,5 @@
 import socketio from 'socket.io';
+import moment from 'moment';
 import onConnection from './onConnection';
 import onAnswer from './onAnswer';
 import onHint from './onHint';
@@ -60,6 +61,7 @@ export function createSocket(server) {
 
             if (user) {
                 user.isOnline = false;
+                user.exitTime = moment();
                 //Удаляем игрока с очереди
                 QueueStore.remove(user.id);
             }

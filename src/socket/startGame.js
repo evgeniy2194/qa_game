@@ -194,7 +194,6 @@ export default function (users, gameConfig) {
 
                 currentGame.users = currentGame.users.map(user => {
 
-                    console.log(HintsStore.getAll());
                     Object.keys(HintsStore.getAll()).map(hintName => {
 
                         user.hints.roundHintsUsed = user.roundHintsUsed || {};

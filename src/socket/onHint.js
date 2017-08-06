@@ -24,7 +24,6 @@ export default (socket, data) => {
 
     game.users = game.users.map(user => {
 
-        console.log(user);
         if (user.userId === userId) {
 
             if (!user.hints.roundHintsUsed[hintName]) {
@@ -57,7 +56,7 @@ export default (socket, data) => {
     } else {
         sendMessage(socket, sendHintsCost({'NoMoreHintsLeft': true}));
     }
-    console.log(newHintsCost);
+
     switch (data.hint) {
         case HINT_50:
 
