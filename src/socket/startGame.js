@@ -2,7 +2,7 @@ import moment from 'moment';
 import Game from '../database/models/game';
 import {GamesStore, UsersStore, QuestionsStore, HintsStore} from '../utils/store';
 import sendMessage from './sendMessage';
-import {sendUserInfo} from '../actions/userActions';
+import {sendUserInfo, sendLevelUp} from '../actions/userActions';
 import {startGame, sendQuestion, gameResult, sendHintsCost} from '../actions/gameActions';
 import {getExpToLevel, getLevelByExp} from '../utils/userUtils';
 import {refreshQuests} from '../utils/userUtils';
@@ -46,7 +46,6 @@ export default function (users, gameConfig) {
         });
 
 
-
         let currentGame = {
             id: gameId,
             model: gameModel,
@@ -57,9 +56,9 @@ export default function (users, gameConfig) {
         };
 
 
-        currentGame.users = currentGame.users.map(user =>{
+        currentGame.users = currentGame.users.map(user => {
             user.hints.hintsUsedCounter = {};
-            Object.keys(HintsStore.getAll()).map(hintName =>{
+            Object.keys(HintsStore.getAll()).map(hintName => {
                 user.hints.hintsUsedCounter[hintName] = 0;
             });
             return user;
@@ -147,6 +146,7 @@ export default function (users, gameConfig) {
                     userModel.expTotal += exp;
                     userModel.gems += gems;
 
+                    const oldUserLevel = userModel.level;
                     const userLevel = getLevelByExp(userModel.expTotal);
 
                     userModel.level = userLevel;
@@ -161,6 +161,13 @@ export default function (users, gameConfig) {
                                 refreshQuests(user);
                             }
                         });
+
+                        console.log('oldUserLevel:', oldUserLevel);
+                        console.log('userLevel', userLevel);
+                        //Поздравляем пользователя с повышением уровня
+                        if (oldUserLevel !== userLevel) {
+                            sendMessage(user, sendLevelUp(userLevel));
+                        }
                     });
 
                     //Удаляем игру из списка игр

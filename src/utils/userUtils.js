@@ -115,12 +115,12 @@ export function getActiveQuests(user) {
  * Refreshes user quests and sends info about it
  *
  * @param user
- * @param socket
  */
 export function refreshQuests(user) {
     const quests = user.quests;
 
     quests.forEach(quest => {
+        let userQuest = quest.UserQuest;
         let check = quest.check;
         let promises = [];
 
@@ -144,7 +144,7 @@ export function refreshQuests(user) {
 
         //Waits for complete all promises and sends info
         Promise.all(promises).then(() => {
-            sendMessage(socket, sendQuestsInfo(user.quests));
+            sendMessage(user, sendQuestsInfo(user.quests));
         });
     });
 }

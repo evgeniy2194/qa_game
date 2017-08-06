@@ -7,6 +7,18 @@ export default function (state = {}, action) {
             return {...state, ...{friends: action.data || []}};
         case 'QUESTS_INFO':
             return {...state, ...{quests: action.data || []}};
+        case 'LEVEL_UP':
+            state.dialogs.push({
+                type: 'LEVEL_UP',
+                data: {level: action.data.level}
+            });
+            return {...state};
+        case 'CLOSE_DIALOG':
+            const index = state.dialogs.indexOf(action.data.dialog);
+            if (index !== -1) {
+                state.dialogs.splice(index, 1);
+            }
+            return {...state};
         default:
             return state;
     }

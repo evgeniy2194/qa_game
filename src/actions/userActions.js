@@ -38,3 +38,10 @@ export function sendQuestsInfo(data) {
         data: quests
     }
 }
+
+export function sendLevelUp(level) {
+    return {
+        type: "LEVEL_UP",
+        data: {level}
+    }
+}

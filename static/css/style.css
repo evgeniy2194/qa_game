@@ -123,3 +123,37 @@
     margin-left: auto;
     width: 500px;
 }
+
+/** DIALOG **/
+.backdrop {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.dialog {
+     -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+             border-radius: 5px;
+    max-width: 500px;
+    margin: 30px auto;
+    position: relative;
+    width: auto;
+    background: #fff;
+    padding: 20px;
+}
+
+.close {
+    float: right;
+}
+
+.clearfix {
+    clear: both;
+}

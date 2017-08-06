@@ -24,7 +24,8 @@ const initialState = {
         coins: 0,
         gems: 0,
         friends: [],
-        quests: []
+        quests: [],
+        dialogs: []
     },
     //Описание игры
     game: {

@@ -37,6 +37,11 @@ export default function (state = {}, action) {
         case "HINTS_COST":
             store = {hintsCosts: action.data};
             return {...state, ...store};
+        case "SHOW_DIALOG":
+            const dialogs = state.dialogs;
+            dialogs.push(action.data);
+
+            return {...state, ...{dialogs: dialogs}};
 
         case "GAME_RESULT":
             //Обнуляем игру
