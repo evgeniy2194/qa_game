@@ -39,9 +39,9 @@ export function answerResult(answerId, isCorrectAnswer) {
     }
 }
 
-export function gameResult(data) {
+export function gameFinished(data) {
     return {
-        type: "GAME_RESULT",
+        type: "GAME_FINISHED",
         data: data
     }
 }

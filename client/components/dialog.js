@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import LevelUp from './levelUp';
+import LevelUp from './dialogs/levelUpDialog';
+import GameRewards from './dialogs/gameRewardsDialog';
 
 export default class Dialog extends Component {
 
@@ -9,7 +10,6 @@ export default class Dialog extends Component {
 
     render() {
 
-        const onCloseDialogClick = this.props.onCloseDialogClick;
         const dialog = this.props.dialog;
 
         let content = "";
@@ -21,7 +21,8 @@ export default class Dialog extends Component {
                 case 'LEVEL_UP':
                     content = <LevelUp level={dialog.data.level}/>;
                     break;
-                case 'GAME_REWARD':
+                case 'GAME_REWARDS':
+                    content = <GameRewards result={dialog.data}/>
                     break;
                 case 'PROMO':
                     break;

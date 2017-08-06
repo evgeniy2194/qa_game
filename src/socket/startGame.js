@@ -2,8 +2,8 @@ import moment from 'moment';
 import Game from '../database/models/game';
 import {GamesStore, UsersStore, QuestionsStore, HintsStore} from '../utils/store';
 import sendMessage from './sendMessage';
-import {sendUserInfo, sendLevelUp} from '../actions/userActions';
-import {startGame, sendQuestion, gameResult, sendHintsCost} from '../actions/gameActions';
+import {sendUserInfo, sendLevelUp, sendGameRewards} from '../actions/userActions';
+import {startGame, sendQuestion, gameFinished, sendHintsCost} from '../actions/gameActions';
 import {getExpToLevel, getLevelByExp} from '../utils/userUtils';
 import {refreshQuests} from '../utils/userUtils';
 
@@ -162,8 +162,6 @@ export default function (users, gameConfig) {
                             }
                         });
 
-                        console.log('oldUserLevel:', oldUserLevel);
-                        console.log('userLevel', userLevel);
                         //Поздравляем пользователя с повышением уровня
                         if (oldUserLevel !== userLevel) {
                             sendMessage(user, sendLevelUp(userLevel));
@@ -179,7 +177,8 @@ export default function (users, gameConfig) {
                 });
 
                 //Отправляем всем ирокам результаты игры
-                sendMessage(users, gameResult(gameRewards));
+                sendMessage(users, gameFinished());
+                sendMessage(users, sendGameRewards(gameRewards))
 
             } else {
                 let question = questions[questionNumber];

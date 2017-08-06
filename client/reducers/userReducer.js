@@ -13,6 +13,12 @@ export default function (state = {}, action) {
                 data: {level: action.data.level}
             });
             return {...state};
+        case 'GAME_REWARDS':
+            state.dialogs.push({
+                type: 'GAME_REWARDS',
+                data: action.data
+            });
+            return {...state};
         case 'CLOSE_DIALOG':
             const index = state.dialogs.indexOf(action.data.dialog);
             if (index !== -1) {

@@ -45,3 +45,10 @@ export function sendLevelUp(level) {
         data: {level}
     }
 }
+
+export function sendGameRewards(data) {
+    return {
+        type: 'GAME_REWARDS',
+        data: data
+    }
+}

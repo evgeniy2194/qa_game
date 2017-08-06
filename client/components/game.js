@@ -2,9 +2,8 @@ import React, {Component} from 'react';
 
 import FindGameComponent from './game/findGameComponent';
 import WaitingGameStartComponent from './game/waitingGameStart';
-import ShowGameResultComponent from './game/showGameResult';
 import IsGameComponent from './game/isGame';
-import {GAME_WILL_START, FIND_GAME, IS_GAME, SHOW_GAME_RESULT} from "../constants/game";
+import {GAME_WILL_START, FIND_GAME, IS_GAME} from "../constants/game";
 
 
 export default class Game extends Component {
@@ -31,14 +30,6 @@ export default class Game extends Component {
                         onLeaveGameClick={this.props.onLeaveGameClick}
                         game={this.props.game}
                         user={this.props.user}/>
-                );
-                break;
-            case SHOW_GAME_RESULT:
-                gameTpl = (
-                    <div>
-                        <ShowGameResultComponent result={game.gameResut}/>
-                        <button className="btn btn-orange" onClick={ onFindGameClick }>Играть еще</button>
-                    </div>
                 );
                 break;
             default:
