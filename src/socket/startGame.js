@@ -196,9 +196,11 @@ export default function (users, gameConfig) {
 
                     Object.keys(HintsStore.getAll()).map(hintName => {
 
-                        user.hints.roundHintsUsed = user.roundHintsUsed || {};
+                        user.hints.roundHintsUsed = user.hints.roundHintsUsed || {};
                         user.hints.roundHintsUsed[hintName] = false;
+                        console.log(hintName);
                     });
+                    console.log(user.hints);
                     return user;
                 });
                 sendMessage(users, sendQuestion(currentGame.currentQuestion));

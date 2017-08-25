@@ -4,9 +4,9 @@ import config from './config/config';
 import app from './src/app';
 import {createSocket} from './src/socket/socket';
 import GameCreator from './src/utils/gameCreator';
-import {Question, QuestionAnswer} from './src/database/models';
+import {Question, QuestionAnswer, Hints, HintCosts} from './src/database/models';
 
-import {QueueStore, QuestionsStore} from './src/utils/store';
+import {QueueStore, QuestionsStore, HintsStore} from './src/utils/store';
 import startGame from './src/socket/startGame';
 
 const privateKey = fs.readFileSync('config/ssl/server.key', 'utf8');
@@ -23,7 +23,23 @@ httpsServer.listen(port, function (error) {
 
     console.info("Server started on port %s.", port);
 });
+Hints.findAll({include: [{model: HintCosts, as: 'costs'}], order: [ ['id', 'ASC'], ['costs', 'countOfUse', 'ASC'] ]}).then(hints => {
 
+
+    hints.map(hint=> {
+        //console.log(hint);
+        HintsStore.add(hint.name, {'costs':[]} );
+
+        hint.costs.map(cost => {
+            //console.log(HintsStore.getAll());
+            //console.log(cost.hintId);
+            HintsStore.addCost(hint.name, {coins: cost.coins, gems: cost.gems});
+        });
+
+    });
+
+
+})
 // //Load all questions
 Question.findAll({include: [{model: QuestionAnswer, as: 'answers'}]}).then((questions) => {
     let i = questions.length;

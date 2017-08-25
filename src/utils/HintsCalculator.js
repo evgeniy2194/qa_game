@@ -8,7 +8,7 @@ export function CalculateHints(user) {
     let hintsCost = {};
 
     Object.keys(HintsStore.getAll()).map(hintName => {
-        hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, user.hintsUsedCounter[hintName] ? user.hintsUsedCounter[hintName] : 0);
+        hintsCost[hintName] = HintsStore.getCostByNameAndCount(hintName, user.hints.hintsUsedCounter[hintName] ? user.hints.hintsUsedCounter[hintName] : 0);
     });
 
     return hintsCost;
